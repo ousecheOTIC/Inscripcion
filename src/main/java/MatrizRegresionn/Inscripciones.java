@@ -998,7 +998,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     } finally {
         // Cierra el navegador al finalizar
         //driver.quit();
-            System.out.println("Selecionamos el archivo");
+            System.out.println("Selecionamos el archivo ");
     }
 }
 
