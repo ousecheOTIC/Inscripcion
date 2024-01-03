@@ -24,14 +24,14 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
+import java.util.List ;
 
 public class Inscripciones extends Login2 {//Hago la extension de login para hacer la prueba más rapido
-    private static final Logger log = LoggerFactory.getLogger(Inscripciones.class);
+    private static final Logger log = LoggerFactory.getLogger(Inscripciones.class) ;
     private static WebDriverWait wait;
     private ExtentReports extent;
     private ExtentTest test;
-    private String folderName;
+    private String folderName ;
     String ingresoLetras = "123801hola";
     String ingresoNumeros = "3718";
     String valorAcordadoMaximo = "123456789123456";

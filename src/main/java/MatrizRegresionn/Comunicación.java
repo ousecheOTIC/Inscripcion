@@ -87,11 +87,11 @@ public class Comunicación extends Inscripciones{
         //WebElement btnGenerarArchivo = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/communications\"]/div/div[1]/div[3]/div[2]/div/div[5]/div[3]/button/div"));
         WebElement btnGenerarArchivo = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"single-spa-application:@CCC/communications\"]/div/div[1]/div[3]/div[2]/div/div[5]/div[3]/button")));
         if (btnGenerarArchivo.isSelected()){
-            System.out.println("Boton habilitado");
+            System.out.println("Boton habilitado") ;
         }else {
 
             //Le doy el valor numerico a la variable
-            Inscripciones.numeroSolicitudDeCompra ="1704";
+            Inscripciones.numeroSolicitudDeCompra ="1704"  ;
 
             //Buscamos los resultados
             WebElement contenedorResultados = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/communications\"]/div/div[1]/div[3]/div[2]/div/div[11]/table/tbody")));
@@ -102,13 +102,13 @@ public class Comunicación extends Inscripciones{
             System.out.println("Hay "+cursosCargados.getText());
 
             for (WebElement Listado : NumeroDeOrdenCompra){
-                WebElement CampoSC = Listado.findElement(By.className("cJAKVD"));
+                WebElement CampoSC = Listado.findElement(By.className("cJAKVD")) ;
 
                 if (CampoSC.getText().contains(Inscripciones.numeroSolicitudDeCompra)){
                     WebElement CheckBox =  CampoSC.findElement(By.className("gVtFyQ"));
                     //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", CheckBox);
                     CheckBox.click();
-                    break;
+                    break ;
 
                 }else {
                     //System.out.println("No se encontró el Sc de la inscripción");
