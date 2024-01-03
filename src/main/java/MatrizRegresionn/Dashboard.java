@@ -1,5 +1,6 @@
 package MatrizRegresionn;
 
+import com.aventstack.extentreports.Status;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -8,6 +9,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
@@ -254,7 +258,7 @@ public class Dashboard extends Login2 {
     @Test (priority = 11)
     public void botonGraficos () throws InterruptedException, IOException {
         //1. EL botón mostrar gráficos debe permitir visualizar los graficos
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(40));
         wait.until(ExpectedConditions.elementToBeClickable(By.className("justify-content-center")));
 
         WebElement btnGraficos =driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/div[2]/button"));
@@ -431,6 +435,11 @@ public class Dashboard extends Login2 {
         }
     }
 
+    @AfterSuite
+    public void finalizarReporte() {
+        // Finalizar y generar el informe ExtentReports
+        extent.flush();
+    }
 
     @AfterTest
     public void close () throws InterruptedException {

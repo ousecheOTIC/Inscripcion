@@ -2,9 +2,11 @@ package MatrizRegresionn;
 
 import org.checkerframework.checker.units.qual.C;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 import org.w3c.dom.html.HTMLInputElement;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Filtros extends Dashboard{
 
@@ -22,7 +25,7 @@ public class Filtros extends Dashboard{
     //Filtro por Celula
     @Test(priority = 12)
     public void filtrosXCelulas () throws InterruptedException, IOException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(40));
         driver.navigate().refresh();
         //Desplegamos opciones de CELULA
         WebElement btncelula = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/div[4]/div[1]/div[1]/div[2]/div/div/div[2]/div")));
@@ -134,8 +137,10 @@ public class Filtros extends Dashboard{
     //friltro por Criticidad
     @Test(priority = 15)
     public void filtrosXCriticidad () throws InterruptedException, IOException {
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(40));
-        WebElement btnCriticidad =wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"react-select-6-placeholder\"]")));
+        WebElement btnCriticidad =wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/div[4]/div[1]/div[4]/div[2]/div/div/div[1]")));
         btnCriticidad.click();
 
         // Una vez que se desplieguen las opciones, selecciona una opción específica
@@ -150,6 +155,7 @@ public class Filtros extends Dashboard{
         //Esperamos resultado que arroja la pagina
         WebElement resultadoFiltroCriticidad = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/table/tbody/tr[1]/td[4]/div/div[1]")));
         //System.out.println(resultadoFiltroCriticidad.getText());
+        capturarYAdjuntarCaptura("Captura_FiltroXCriticidad");//Captura de pantalla
 
 
         //Mostramos resultado que arroja la pagina
@@ -188,7 +194,11 @@ public class Filtros extends Dashboard{
 
     }
 
-
+    @AfterSuite
+    public void finalizarReporte() {
+        // Finalizar y generar el informe ExtentReports
+        extent.flush();
+    }
 
     @AfterTest
     public void close () throws InterruptedException {

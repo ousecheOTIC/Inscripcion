@@ -22,10 +22,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Login2 {
-    private String url = "https://sucursalvirtualv2-qa.ccc.cl/login";
+    private String url = "https://sucursalvirtualv2-qa2.ccc.cl/login";
     static WebDriver driver;
     private static WebDriverWait wait;
-    private ExtentReports extent;
+    ExtentReports extent;
     private ExtentTest test;
     private String folderName;
     String Usuario = "265589014";//265589014 --116088134
@@ -41,17 +41,13 @@ public class Login2 {
         //driver.manage().window().maximize();
     }
 
-    @BeforeMethod
+    @BeforeClass
     public void inicializarTest() {
         // Configuración del test actual en ExtentReports
         test = extent.createTest(getClass().getSimpleName());
-
-        // Generar un nombre de carpeta única para la captura de pantalla
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(new Date());
-        folderName = "C:\\Users\\ouseche\\OneDrive - OTIC CChC\\Escritorio\\Automatización\\probando\\Evidencias\\Evidencia" + timeStamp;
-        File folder = new File(folderName);
-        folder.mkdir();
     }
+
+
 
     @BeforeSuite
     public void inicializarReporte() {
@@ -59,6 +55,16 @@ public class Login2 {
         ExtentHtmlReporter htmlReporter = new ExtentHtmlReporter("ReporteDePruebas.html");
         extent = new ExtentReports();
         extent.attachReporter(htmlReporter);
+        // Generar un nombre de carpeta única para la captura de pantalla
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmm").format(new Date());
+        folderName = "C:\\Users\\ouseche\\OneDrive - OTIC CChC\\Escritorio\\Automatización\\probando\\Evidencias\\Evidencia" + timeStamp;
+        File folder = new File(folderName);
+        folder.mkdir();
+
+
+        //////////////////////////////////////////////////////
+        // Inicializa el informe una sola vez (puede ir en un método de configuración o en una clase de configuración separada)
+        //ReportManager.initializeReport("C:\\Users\\ouseche\\OneDrive - OTIC CChC\\Escritorio\\Automatización\\probando\\informe.html");
     }
 
     @Test (priority = 1)
@@ -118,6 +124,7 @@ public class Login2 {
         passwordInput.sendKeys(Contraseña);
 
         capturarYAdjuntarCaptura("Captura_Login");//Captura de pantalla
+
         //BOTON  INGRESAR
         loginBtn.click();
 
@@ -128,6 +135,7 @@ public class Login2 {
         String msjBienvenida = msj.getText();
         if (msj.isDisplayed()) {
             System.out.printf(msjBienvenida);
+
         }else {
             System.out.printf("No aparece mensaje");;
         }
@@ -151,6 +159,7 @@ public class Login2 {
         accesoInegraNogocio();
         Thread.sleep(2000);//Espera necesaria para que carguen los dashboard
         capturarYAdjuntarCaptura("Captura_IntegraNegocio");//Captura de pantalla
+
 
     }
 
@@ -217,16 +226,14 @@ public class Login2 {
             test.log(Status.SKIP, "El test ha sido omitido");
         }
     }
-    @AfterSuite
-    public void finalizarReporte() {
-        // Finalizar y generar el informe ExtentReports
-        extent.flush();
-    }
+
     @AfterTest
     public void close () throws InterruptedException {
         //driver.close();
         driver.quit();
         driver.quit();
+        //ReportManager.flushReport();
+
     }
 
 }

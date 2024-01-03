@@ -3,20 +3,25 @@ package MatrizRegresionn;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 
+import com.aventstack.extentreports.Status;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
@@ -36,18 +41,20 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     public WebElement btnBorrarCodigo;
 
     ///////////////////// DATOS PARA PRUEBAS
-    String NombreCliente = "PATAGONIA ";
+    String NombreCliente = "SODIMAC ";
     String RutCliente = "96792430-k";
     String sucursal = "Casa Matriz";
-    String codigoSence = "1238037130"; //1238013718-- 1238019176 -- 1238017721
-    String valorAcordado ="650.000";
+    String codigoSence = "1238044124"; //1238013718-- 1238019176 -- 1238017721
+    String valorAcordado ="600.000";
     String fechaInicio = "22/12";
     String fechaTermino = "25/12";
     String rutClienteFinanciamiento= "264483148";
+    public static String numeroSolicitudDeCompra;
 
     int ConteoCantidadParticipantes = 0;
     List <WebElement> cantidadParticipantes = null;
     String tipoCuentaCapacitacion = "Capacitacion";
+
 
     //Me quedé pegadooooo
     //open
@@ -239,7 +246,14 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
 
             //Ingresamos un cliente a buscar
             WebElement inputnombreCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("hQBaLS")));
-            inputnombreCliente.sendKeys(RutCliente);
+            String resultados = "";
+            /*if (RutCliente.replaceAll(("[^0-9]"), "").length() >= 8) {
+                // Insertar un guion después del octavo carácter
+                resultados = resultados.substring(0, 8) + "-" + resultados.substring(8);
+            } else {
+                System.out.println("La longitud del número es menor a 8. No se insertará el guion.");
+            }*/
+            inputnombreCliente.sendKeys(NombreCliente);
             Thread.sleep(3000);
             //Hacemos una lista con los resultados que arroja
             List<WebElement> resultado = driver.findElements(By.className("jOXArb"));
@@ -248,21 +262,43 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
             // Verifica cantidad de resultados
             if (resultado.size() == 1) {
                 System.out.println("Solo hay 1 resultado");
+                //Recorremos la lista de resultados para tomar los textos
+                for (WebElement opc : resultado) {
+                    String txtCurso = opc.getText(); // Obtengo el texto del elemento actual en la lista
+                    System.out.println("Resultado: " + txtCurso);
+                }
+                //TODO: hay que hacer una iteración que recorra la lista y seleccione la más parecida
+                Thread.sleep(3000);//Espera necesaria Si la quito se daña la prueba
+                WebElement PrimerElemento = wait.until(ExpectedConditions.visibilityOf(resultado.get(0)));
+                PrimerElemento.click();
             } else if (resultado.size() <= 5) {
                 System.out.println("Hay menos de 5 resultados");
-            } else {
+                //Recorremos la lista de resultados para tomar los textos
+                for (WebElement opc : resultado) {
+                    String txtCurso = opc.getText(); // Obtengo el texto del elemento actual en la lista
+                    System.out.println("Resultado: " + txtCurso);
+                }
+                //TODO: hay que hacer una iteración que recorra la lista y seleccione la más parecida
+                Thread.sleep(3000);//Espera necesaria Si la quito se daña la prueba
+                WebElement PrimerElemento = wait.until(ExpectedConditions.visibilityOf(resultado.get(0)));
+                PrimerElemento.click();
+            } else if (resultado.size()>=5){
                 System.out.println("Hay mas de 5 resultados");
+                //Recorremos la lista de resultados para tomar los textos
+                for (WebElement opc : resultado) {
+                    String txtCurso = opc.getText(); // Obtengo el texto del elemento actual en la lista
+                    System.out.println("Resultado: " + txtCurso);
+                }
+                //TODO: hay que hacer una iteración que recorra la lista y seleccione la más parecida
+                Thread.sleep(3000);//Espera necesaria Si la quito se daña la prueba
+                WebElement PrimerElemento = wait.until(ExpectedConditions.visibilityOf(resultado.get(0)));
+                PrimerElemento.click();
+            }else {
+                System.out.println("No hay resultados");
+
             }
 
-            //Recorremos la lista de resultados para tomar los textos
-            for (WebElement opc : resultado) {
-                String txtCurso = opc.getText(); // Obtengo el texto del elemento actual en la lista
-                System.out.println("Resultado: " + txtCurso);
-            }
-            //TODO: hay que hacer una iteración que recorra la lista y seleccione la más parecida
-            Thread.sleep(3000);//Espera necesaria Si la quito se daña la prueba
-            WebElement PrimerElemento = wait.until(ExpectedConditions.visibilityOf(resultado.get(0)));
-            PrimerElemento.click();
+
 
         } else {
             System.out.println("No veo mensaje de inscripcion de curso");
@@ -349,14 +385,14 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         }
 
         //Validamos mensaje de advertencia
-        WebElement msjAdvertencia = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("iNQDDL")));
+        WebElement msjAdvertencia = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[contains(text(), '¿Quieres salir de la inscripción?')]")));
         String txtmsjAdvertencia = msjAdvertencia.getText();
         if (txtmsjAdvertencia.contains("¿Quieres salir de la inscripción?")) {
             //Buscamos boton Salir
             //WebElement btnConfirmarSalir = driver.findElement(By.cssSelector("#single-spa-application\\:\\@CCC\\/inscriptions > div > div.sc-bcXHqe.dqlVec > div > div.sc-bcXHqe.hlMJoa > div > div.sc-eDvSVe.jDzeEO > div > button.sc-bcXHqe.eCGCgc.rounded-full.whitespace-nowrap.px-\\[2\\.5rem\\].h-12.text-xl.gap-2.py-1.px-4.font-medium.bg-secondary.hover\\:bg-white.hover\\:border-solid.hover\\:border-secondary.hover\\:text-secondary.text-contained"));
             //btnConfirmarSalir.click();
             //Para efectos de continuidad de pruebas, no presionaremos salir si no que continuaremos
-            WebElement btnNoSalir = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[3]/div/div[2]/div/button[1]"));
+            WebElement btnNoSalir = driver.findElement(By.xpath("//button[contains(text(), 'No Salir')]"));
             btnNoSalir.click();
             System.out.println("Salimos");
         } else {
@@ -645,6 +681,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         //4. En la parte inferior del buscador se mostrará la fecha de validación del codigo sence
         WebElement fechaValidoCurso = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[5]/div"));
         System.out.println("Fecha valido hasta: " + fechaValidoCurso.getText());
+        scrollHaciaArriba(driver);
         capturarYAdjuntarCaptura("Captura_BusquedaDeCursoAInscribir");//Caprtura de pantalla
 
 
@@ -958,16 +995,17 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         WebElement btnvolver = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[5]/div/div[2]/button")));
         //Este boton no lo presionaré por efectos de la prueba
 
-        capturarYAdjuntarCaptura("Captura_Horario&LlenadoDeInformacionAdicional");//Caprtura de pantalla
+
 
         //Opcion continuar
         OpcionContinuar();
     }
 
     @Test(priority = 57)
-    public void  Cargamasivadeparticipantes () throws InterruptedException, AWTException {
-        Thread.sleep(10000);
-
+    public void  CargaMasivadeparticipantes () throws InterruptedException, AWTException, IOException {
+        Thread.sleep(5000);
+        capturarYAdjuntarCaptura("Captura_Paso4_Participantes");//Captura de pantalla
+        Thread.sleep(5000);
         //1. En la plataforma, se proporcionará un cuadro donde el usuario puede arrastrar el archivo que contiene los datos de los participantes.
         //
         WebElement AgregarArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("bGgmkt")));
@@ -1003,7 +1041,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
 }
 
     @Test(priority = 58)
-    public void VisualizacionDeRegistros () throws InterruptedException{
+    public void VisualizacionDeRegistros () throws InterruptedException, IOException {
         //1. Después de cargar el archivo  Excel, se mostrará una previsualización de los registros de participantes.
         //
         WebElement pantallaEmergenteParticipantes = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[11]/div/div/div[2]")));
@@ -1022,7 +1060,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         // Scroll vertical y horizontal
         // Realiza un scroll a la derecha utilizando JavaScript
         scrollRight(driver);
-
+        capturarYAdjuntarCaptura("Captura_Carga_Participantes_scrollIzquierda");//Captura de pantalla
         //1. Los títulos de la tabla de previsualización permanecerán fijos en la parte superior al realizar el scroll vertical.
         //
         //2. Los títulos en la grilla tendrán la opción de ordenamiento ascendente o descendente
@@ -1033,7 +1071,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         }
 
     @Test (priority = 59)
-    public void ConfirmacioncargaExitosa () throws InterruptedException{
+    public void ConfirmacionCargaExitosa () throws InterruptedException{
 //1. Si el usuario realiza la confirmación de carga (hace clic en "Guardar"), se mostrará un mensaje de carga exitosa. Luego de la carga exitosa, el usuario permanecerá en la misma pantalla de previsualización de participantes cargados con la opción de "Salir".
 //
         WebElement btnGuardarCarga = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[11]/div/div/div[3]/div[2]/div/div[1]/button"));
@@ -1056,8 +1094,9 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     }
 
     @Test(priority = 60)
-    public void ResumenDeMontos () throws InterruptedException{
+    public void ResumenDeMontos () throws InterruptedException, IOException {
         BuscarResumenDeMontos();
+        capturarYAdjuntarCaptura("Captura_Carga_Montos_Participantes");//Caprtura de pantalla
     }
 
     @Test(priority = 61)
@@ -1099,7 +1138,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     }
 
     @Test(priority = 62)
-    public void TipoCuentaFinanciamiento () throws InterruptedException{
+    public void TipoCuentaFinanciamiento () throws InterruptedException, IOException {
         //Validar que estamos en el paso 5
         WebElement Paso5 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div/div[3]/div[2]/div/div[2]/div[1]")));
         System.out.println(Paso5.getText());
@@ -1154,24 +1193,119 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
             //3. En la parte superior de la cuenta de financiamiento se visualizara los montos del curso mostrados en el paso 4
             WebElement clientefinanciamenientoInput = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[7]/div[6]/div[1]/input"));
             clientefinanciamenientoInput.sendKeys(rutClienteFinanciamiento);
-            WebElement btnValidarCliente = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[7]/div[6]/div[2]/button"));
 
 
-            //Buscamos boton Inscribir
-            WebElement btnInscribir = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div/div[3]/div[2]/div/div[8]/div/div[3]/button")));
-            //btnInscribir.click();
-            Thread.sleep(15000);
+
 
         }else{
             System.out.println("No se visualiza el paso 5");
         }
+    }
+
+    @Test(priority = 63)
+    public void InscribirCurso () throws InterruptedException, IOException {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(40));
+
+        WebElement btnValidarCliente = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[7]/div[6]/div[2]/button"));
+        capturarYAdjuntarCaptura("Captura_CuentaFinanciamiento");//Captura de pantalla
+        //Buscamos boton Inscribir
+        WebElement btnInscribir = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div/div[3]/div[2]/div/div[8]/div/div[3]/button")));
+        btnInscribir.click();
+
+        if (wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[text()='Inscripción de curso realizada']"))).isDisplayed()){
 
 
+            //Validamos el tipo de contrato creado
+            WebElement nombreTipoFranquicia = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[3]/div/div/div[1]"));
+            System.out.println(nombreTipoFranquicia.getText());
+
+            numeroSolicitudDeCompra = String.valueOf(driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[3]/div/div/div[2]")).getText());
+            System.out.println(numeroSolicitudDeCompra);
+
+            String cadenaConNumeros = "abc123xyz456";
+
+            // Itera a través de la cadena y construye un nuevo string con los dígitos
+            StringBuilder numeros = new StringBuilder();
+            for (char caracter : numeroSolicitudDeCompra.toCharArray()) {
+                if (Character.isDigit(caracter)) {
+                    numeros.append(caracter);
+                }
+            }
+
+            String numerosExtraidos = numeros.toString();
+            System.out.println("Números extraídos: " + numerosExtraidos);
+            numeroSolicitudDeCompra=numerosExtraidos;
+
+
+
+
+
+            //Captura
+            capturarYAdjuntarCaptura("Captura_Descargar_solicitud_Compra");//Captura de pantalla
+
+            //Descargamos la solicitud de compra
+            WebElement btnDescargar = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[3]/div/div/div[3]/button"));
+            btnDescargar.click();
+
+
+            Thread.sleep(5000);
+
+            //Salimos de incripciones
+            OpcionSalir();
+
+
+
+
+        }
+    }
+
+    @Test(priority = 64)
+    public void DescargarSolicitudDeCompra () throws InterruptedException, IOException{
+        // Establece la ruta de descarga
+        String rutaDescarga = folderName;
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("download.default_directory=" + rutaDescarga);
+
+
+        // Espera un tiempo suficiente para que se complete la descarga (puedes ajustar este tiempo según sea necesario)
+        try {
+            Thread.sleep(5000); // Espera 5 segundos
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Visualiza el archivo PDF descargado
+        visualizarArchivoPDF(rutaDescarga, "SolicitudDeCompra"+numeroSolicitudDeCompra+".pdf");
 
 
 
     }
+    public static void scrollHaciaArriba(WebDriver driver) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollTo(0, 0);");
+    }
+    private static void visualizarArchivoPDF(String rutaDescarga, String nombreArchivo) {
+        // Construye la ruta completa del archivo PDF descargado
+        String rutaArchivoPDF = rutaDescarga + File.separator + nombreArchivo;
 
+        // Intenta abrir el archivo PDF con el visor de PDF predeterminado
+        try {
+            // Abre el archivo PDF con el visor predeterminado (puede variar según el sistema operativo)
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                // En Windows
+                Runtime.getRuntime().exec("cmd /c start " + rutaArchivoPDF);
+            } else if (System.getProperty("os.name").toLowerCase().contains("nix")
+                    || System.getProperty("os.name").toLowerCase().contains("nux")
+                    || System.getProperty("os.name").toLowerCase().contains("mac")) {
+                // En sistemas basados en Unix (Linux y MacOS)
+                Runtime.getRuntime().exec("xdg-open " + rutaArchivoPDF);
+            } else {
+                throw new UnsupportedOperationException("Sistema operativo no compatible");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private void mostrarDatos (String cliente) throws InterruptedException{
 
 
@@ -1226,24 +1360,20 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
             System.out.println("No coinciden la cantidad de participantes");
         }
     }
-
     private static void typeString(Robot robot, String s) {
         for (char c : s.toCharArray()) {
             typeChar(robot, c);
         }
     }
-
     private static void typeChar(Robot robot, char c) {
         int keyCode = KeyEvent.getExtendedKeyCodeForChar(c);
         robot.keyPress(keyCode);
         robot.keyRelease(keyCode);
     }
-
     private static void selectFile(Robot robot) {
         // Implementa la lógica para seleccionar un archivo
         // Puedes usar las teclas de flecha, etc.
     }
-
     private static void closeFileExplorer(Robot robot) {
         // Implementa la lógica para cerrar la ventana del explorador de archivos
         // Puedes usar Alt + F4, por ejemplo
@@ -1252,7 +1382,6 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         robot.keyRelease(KeyEvent.VK_F4);
         robot.keyRelease(KeyEvent.VK_ALT);
     }
-
     private static void scrollRight(WebDriver driver) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         // Puedes ajustar el valor de '500' según la cantidad de píxeles que deseas desplazarte a la derecha
@@ -1358,6 +1487,11 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
 
     }
 
+    @AfterSuite
+    public void finalizarReporte() {
+        // Finalizar y generar el informe ExtentReports
+        extent.flush();
+    }
 
     @AfterTest
     public void close () throws InterruptedException {
@@ -1375,6 +1509,8 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         System.out.println("Franquicia: ");
         System.out.println("Tipo de contrato: ");
         System.out.println("Modalidad: ");
+
+
             //driver.close();
             driver.quit();
             driver.quit();

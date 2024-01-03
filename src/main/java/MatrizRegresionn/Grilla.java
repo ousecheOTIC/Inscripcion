@@ -95,7 +95,6 @@ public class Grilla extends Filtros{
         String urlactual = driver.getCurrentUrl();
         String linkinscripcion = ("sucursalvirtualv2-qa.ccc.cl/inscriptions");
         //System.out.println(urlactual);
-        capturarYAdjuntarCaptura("Captura_DetalleCurso");//Captura de pantalla
 
         if (urlactual.contains(linkinscripcion)) {
             System.out.println("Estamos en link de Inscripciones");
@@ -186,6 +185,7 @@ public class Grilla extends Filtros{
             } else {
                 System.out.println("No se ve OC (N° Orden de compra del curso)");
             }
+            capturarYAdjuntarCaptura("Captura_DetalleCurso");//Captura de pantalla
 
         } else {
             System.out.println("El link no es el correcto");

@@ -278,6 +278,9 @@ public class VerDetalle extends Grilla{
             btnRequisitos.click();
         }
 
+        //Desplegamos opciones
+        WebElement btnDesplegarOpciones = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div[2]/div[2]/div/div[2]/div/button")));
+        btnDesplegarOpciones.click();
         Thread.sleep(2000);
         //Requisitos
         WebElement fechasHistorial01 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div[2]/div[2]/div/div[2]/div[2]/div/ol/li[1]/h3[2]")));
