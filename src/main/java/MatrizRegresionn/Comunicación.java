@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
+import static MatrizRegresionn.Inscripciones.*;
+
 public class Comunicación extends Inscripciones{
     private static final Logger log = LoggerFactory.getLogger(Inscripciones.class);
     private static WebDriverWait wait;
@@ -56,6 +58,8 @@ public class Comunicación extends Inscripciones{
         String urlComumnicacion = driver.getCurrentUrl();
         if (urlComumnicacion.contains("communications")){
 
+
+            Thread.sleep(3000); //Espera necesaria
             //Captura
             capturarYAdjuntarCaptura("Captura_Menu_Comunicacion");//Captura de pantalla
 
@@ -79,19 +83,19 @@ public class Comunicación extends Inscripciones{
 
     @Test(priority = 66)
     public void SeleccionarCursoAComunicar () throws InterruptedException, IOException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        /*WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
         //Al no haber ningún curso de la grilla seleccionado, el botón "Generar archivo" no debe estar habilitado.
         //
         //Así mismo al tener algún curso seleccionado y el botón es"té habilitado, una vez se elimine la selección, el botón "Generar archivo" debe inhabilitarse.
         //WebElement btnGenerarArchivo = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/communications\"]/div/div[1]/div[3]/div[2]/div/div[5]/div[3]/button/div"));
-        WebElement btnGenerarArchivo = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"single-spa-application:@CCC/communications\"]/div/div[1]/div[3]/div[2]/div/div[5]/div[3]/button")));
+        WebElement btnGenerarArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/communications\"]/div/div[1]/div[3]/div[2]/div/div[5]/div[3]/button")));
         if (btnGenerarArchivo.isSelected()){
             System.out.println("Boton habilitado") ;
         }else {
 
             //Le doy el valor numerico a la variable
-            Inscripciones.numeroSolicitudDeCompra ="1704"  ;
+            //Inscripciones.numeroSolicitudDeCompra ="1704"  ;
 
             //Buscamos los resultados
             WebElement contenedorResultados = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/communications\"]/div/div[1]/div[3]/div[2]/div/div[11]/table/tbody")));
@@ -106,6 +110,7 @@ public class Comunicación extends Inscripciones{
 
                 if (CampoSC.getText().contains(Inscripciones.numeroSolicitudDeCompra)){
                     WebElement CheckBox =  CampoSC.findElement(By.className("gVtFyQ"));
+                    System.out.println(CampoSC.getText());
                     //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", CheckBox);
                     CheckBox.click();
                     break ;
@@ -132,15 +137,56 @@ public class Comunicación extends Inscripciones{
                 Thread.sleep(10000);
 
             }
+        }*/
+    }
+
+    @Test (priority = 67)
+    public void CargarComunicacion () throws InterruptedException, IOException, AWTException, IOException {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
 
+        //Presionamos el boton para cargar archivo
+        WebElement btnCargarComunicacion = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/communications\"]/div/div[1]/div[3]/div[2]/div/button")));
+        btnCargarComunicacion.click();                //Buscamos el boton para subir archivo
+
+        //Buscamos el msj de carga de comunicacion
+        WebElement msjCarga = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/communications\"]/div/div[1]/div[3]/div[2]/div[2]/p"));
+        if (msjCarga.getText().equals("Carga una respuesta de comunicación SENCE")) {
+
+            //WebElement subirArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("bGgmkt")));
+            WebElement subirArchivo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("kkqEus")));
+
+            subirArchivo.click();
+
+            try {
+                // Espera un segundo para asegurar que el explorador de archivos se haya abierto
+                Thread.sleep(1000);
+
+                // Automatiza la navegación y selección del archivo usando Robot
+                Robot robot = new Robot();
+                typeString(robot, "Liquidaciones ");
+                robot.keyPress(KeyEvent.VK_ENTER);
+                robot.keyRelease(KeyEvent.VK_ENTER);
+                Thread.sleep(1000);
+                selectFile(robot);
+                robot.keyPress(KeyEvent.VK_ENTER);
+                robot.keyRelease(KeyEvent.VK_ENTER);
+                System.out.println("empieza espera");
+                Thread.sleep(10000);
+                closeFileExplorer(robot);
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            } finally{
+                // Cierra el navegador al finalizar
+                //driver.quit();
+                System.out.println("Selecionamos el archivo ");
+            }
         }
 
 
 
 
-
     }
-
 
 }

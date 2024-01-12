@@ -31,7 +31,7 @@ public class Filtros extends Dashboard{
         WebElement btncelula = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/div[4]/div[1]/div[1]/div[2]/div/div/div[2]/div")));
         btncelula.click();
 
-        List<WebElement> opcionesCelulas = driver.findElements(By.id("react-select-3-listbox"));
+        List<WebElement> opcionesCelulas = driver.findElements(By.id("react-select-1-listbox"));
         if (opcionesCelulas.isEmpty() == false){
             for (WebElement listado :opcionesCelulas){
                 System.out.println(listado.getText());

@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.TreeMap;
@@ -18,13 +19,13 @@ import java.util.TreeMap;
 public class ContenidoDelCurso extends Requisitos{
 
     String codigoSence = "1238013718";
-    String IdSence = "6138500";
+    String IdSence = "6138774";
     //6138500
     String codigoCompra = "";
     private Object GuardarContenidoDeCurso;
 
     @Test (priority = 26)
-    public void IngresoAlmodulo ()throws InterruptedException{
+    public void IngresoAlmodulo () throws InterruptedException, IOException {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
         //Presionamos boton "contenido de curso"
@@ -60,6 +61,7 @@ public class ContenidoDelCurso extends Requisitos{
             System.out.println("No se visualiza el segmento");
         }
 
+        capturarYAdjuntarCaptura("Captura_Ingreso_Contenido_Curso");//Captura de pantalla
 
 
 
@@ -78,7 +80,7 @@ public class ContenidoDelCurso extends Requisitos{
     }
 
     @Test(priority = 27)
-    public void BuscarCursoXCodigoSence ()throws InterruptedException{
+    public void BuscarCursoXCodigoSence () throws InterruptedException, IOException {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
         //Desplegamos la lista de opciones
@@ -110,10 +112,12 @@ public class ContenidoDelCurso extends Requisitos{
 
         if (txtCodigoResultado.equals(codigoSence) ){
             System.out.println("Codigo correcto");
+
         }else {
             System.out.println("Codigo incorrecto");
             System.out.println(txtCodigoResultado);
         }
+        capturarYAdjuntarCaptura("Captura_BuscarCursoXCodigoSence");//Captura de pantalla
 
 
 
@@ -121,7 +125,7 @@ public class ContenidoDelCurso extends Requisitos{
 
     //Dejé esta prioridad ya que po solicitud no arroja resultados
     @Test(priority = 29)
-    public void BuscarCursoXIdSence ()throws InterruptedException{
+    public void BuscarCursoXIdSence () throws InterruptedException, IOException {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         //Desplegamos la lista de opciones
         WebElement listOpciones = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"headlessui-menu-button-1\"]")));
@@ -142,6 +146,7 @@ public class ContenidoDelCurso extends Requisitos{
         //Presionamos Buscar
         WebElement btnBuscar = driver.findElement(By.className("hJbcKB"));
         btnBuscar.click();
+        capturarYAdjuntarCaptura("Captura_BuscarCursoXCodigoIdSence");//Captura de pantalla
 
         //Validamos que el resultado sea correcto
         System.out.println("No tengo como validar el resultado de la busqueda");
@@ -158,7 +163,7 @@ public class ContenidoDelCurso extends Requisitos{
     }
 
     @Test (priority = 28)
-    public void BuscarCursoXSolicitudCompra ()throws InterruptedException{
+    public void BuscarCursoXSolicitudCompra () throws InterruptedException, IOException {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         //Desplegamos la lista de opciones
         WebElement listOpciones = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"headlessui-menu-button-1\"]")));
@@ -179,6 +184,7 @@ public class ContenidoDelCurso extends Requisitos{
         //Presionamos Buscar
         WebElement btnBuscar = driver.findElement(By.className("hJbcKB"));
         btnBuscar.click();
+        capturarYAdjuntarCaptura("Captura_BuscarCursoXCodigoSC");//Captura de pantalla
 
         //Validamos que el resultado sea correcto
         //WebElement resultadoBusquedaXSolicitud = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#single-spa-application\\:\\@CCC\\/inscriptions > div > div.sc-bcXHqe.dqlVec > div > div.grid.grid-cols-9.md\\:grid.lg\\:grid.xl\\:grid.md\\:grid-cols-9.lg\\:grid-cols-9.xl\\:grid-cols-9 > div > div:nth-child(2) > div > div:nth-child(1) > div.w-full > h1.text-primary.font-semibold.text-lg.leading-5")));
@@ -188,7 +194,7 @@ public class ContenidoDelCurso extends Requisitos{
     }
 
     @Test (priority = 30)
-    public void AgregarContenidoACurso ()throws InterruptedException{
+    public void AgregarContenidoACurso () throws InterruptedException, IOException {
         //El sistema debe permitir al usuario editar los cuadros de texto denominados "Funciones y/o Tareas" y "Contenidos Temáticos" que estén vacíos.
 
         Thread.sleep(3000);
@@ -220,10 +226,14 @@ public class ContenidoDelCurso extends Requisitos{
         }else{
             System.out.println("Boton Guardar deshabilitado");
         }
+
+
+        capturarYAdjuntarCaptura("Captura_Agregar_contenido_curso");//Captura de pantalla
+
     }
 
     @Test(priority = 32)
-    public void EditarContenidoACurso ()throws InterruptedException{
+    public void EditarContenidoACurso () throws InterruptedException, IOException {
         Thread.sleep(5000);
         List<WebElement> Listainputs = driver.findElements(By.className("cjYGAN"));
 
@@ -263,7 +273,9 @@ public class ContenidoDelCurso extends Requisitos{
 
     //Dejamos este luego de Agregar para validar correcto flujo
     @Test (priority = 31)
-    public void GuardarContenidoDeCurso ()throws InterruptedException{
+    public void GuardarContenidoDeCurso () throws InterruptedException, IOException {
+        capturarYAdjuntarCaptura("Captura_GuardarContenidoDeCurso");//Captura de pantalla
+
         //Validamos que boton esté habilitado
         WebElement btnGuardar = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[4]/div[2]/button"));
         btnGuardar.click();
@@ -278,12 +290,16 @@ public class ContenidoDelCurso extends Requisitos{
 
         //Guardamos el contenido del curso
         WebElement btnGuardarCurso = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[3]/div/div[2]/div/button[2]"));
+        capturarYAdjuntarCaptura("Captura_ConfirmarGuardarContenidoDeCurso");//Captura de pantalla
+
         btnGuardarCurso.click(); //Deshabilito el boton para que no se vaya a guardar cada vez que ejecuto la prueba
 
         //Por mientras hago las pruebas
         //WebElement btnSeguirEditando = driver.findElement(By.className("px-[0.5rem]"));
         //btnSeguirEditando.click();
         Thread.sleep(3000);
+        capturarYAdjuntarCaptura("Captura_Msj_Edicion_Exitosa");//Captura de pantalla
+
     }
 
     @Test (priority = 34)

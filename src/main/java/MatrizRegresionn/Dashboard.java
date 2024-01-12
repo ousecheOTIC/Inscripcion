@@ -16,6 +16,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Formatter;
@@ -27,10 +28,10 @@ import java.util.concurrent.TimeUnit;
 public class Dashboard extends Login2 {
     private static WebDriverWait wait;
     private static final Logger log = LoggerFactory.getLogger(Inscripciones.class);
-    String nombreCurso = "calidad";
-    String IdSdence = "898784714";
+    String nombreCurso = "";
+    String IdSdence = "";
     String tipoDeBuscadorr = "id sence";
-    String elementoBusquedaa = "6306572";
+    String elementoBusquedaa = "6423520";
     public int IDinput =6306572;
     int cantidadRegistros = 10;
 
@@ -239,6 +240,9 @@ public class Dashboard extends Login2 {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(25));
         //1. El buscador debe funcionar al hacer enter en el campo despúés de introducir un registro
 
+        //Buscamos el nombre del curso en el archivo de DATOS PRUEBAS
+        nombreCurso= Login2.extraerDatosDeLinea(Login2.rutaArchivo,6);
+
         //Llamamos el metodo buscar y filtramos por nombre
         buscadorDeCursos("Nombre de curso",nombreCurso);
     }
@@ -248,6 +252,10 @@ public class Dashboard extends Login2 {
     public void BuscadorDeCursosPorID () throws InterruptedException, IOException {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         //String tipoDeBuscador =elementoBusqueda;
+
+        //Buscamos el nombre del curso en el archivo de DATOS PRUEBAS
+        IdSdence= Login2.extraerDatosDeLinea(Login2.rutaArchivo,7);
+
 
         buscadorDeCursos("ID Sence", IdSdence);
         Thread.sleep(5000);
@@ -326,7 +334,6 @@ public class Dashboard extends Login2 {
         // Localiza todos los elementos por su clase
         Thread.sleep(3000);//Espera OBLIGATORIA
         List<WebElement> buscador = driver.findElements(By.cssSelector(".block.px-4.py-2"));
-        //System.out.println(buscador.size());
         if (buscador.size()==3) {
             for (WebElement opc : buscador) {
                 String palabraMinuscula = opc.getText().toLowerCase();
@@ -359,7 +366,7 @@ public class Dashboard extends Login2 {
                 //Intercepto el Nombre de cada resultado y lo anexo a una lista
                 Thread.sleep(5000);//Espera necesaria
                 WebElement tablaResultados = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/table/tbody")));
-                List<WebElement> resultadoFiltro = driver.findElements(By.className("fYMkUI"));
+                List<WebElement> resultadoFiltro = driver.findElements(By.className("kAihBX"));
                 //System.out.println(resultadoFiltro.size());
                 // Itera a través de la lista de elementos
                 int cantidadResultadosXNombre = 0;
@@ -379,7 +386,7 @@ public class Dashboard extends Login2 {
                             // Eliminar signos de puntuación alrededor de la palabra (opcional)
                             palabra = palabra.replaceAll("[.,!?]", "");
                             // Comprobar si la palabra actual coincide con la palabra buscada (ignorando mayúsculas/minúsculas)
-                            if (palabra.equalsIgnoreCase(nombreCurso)) {
+                            if (nombreCurso.contains(palabra)) {
                                 encontrado = true; // Encontramos la palabra
                                 break; // Sal del bucle si la palabra fue encontrada
                             }
@@ -414,9 +421,9 @@ public class Dashboard extends Login2 {
                 //System.out.println("-"+resultadoFiltro.size());
                 for (WebElement listado : resultadoFiltro) {
                     //System.out.println("- "+listado.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/table/tbody/tr[1]/td[2]")).getText());
-
+                    System.out.println();
                     if (elementoBusqueda.toLowerCase().equals((CharSequence) listado.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/table/tbody/tr[1]/td[2]")).getText())) {
-                        //System.out.println("se encontró el Id en la busqueda");
+                        System.out.println("se encontró el Id en la busqueda");
                         cantidadResultados = cantidadResultados + 1;
 
                     } else {

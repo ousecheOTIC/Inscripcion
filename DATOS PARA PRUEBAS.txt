@@ -1,0 +1,42 @@
+		DATOS DE PERFIL
+Usuario: 265589014
+Contraseña: Oticc--2024
+
+5)		DATOS DE FILTROS
+Filtro por nombre:Uso de Buenas Prácticas de Manufactura en Una Planta Farmacéutica
+Filtro por Id Sence:898784714
+Filtro por SC:
+
+10)		TIPO DE CONTRATO Y FRANQUICIA
+Tipo linea: Cuenta 1
+Tipo contrato: Postcontrato
+
+14)		DATOS DE INSCRIPCIÓN
+Nombre cliente: Sodimac S.A
+RUT del cliente:  96.792.430-K 
+Sucursal: RUTA 5 SUR
+Código Sence: 1238035726
+Valor Acordado por Participantes: $250.000
+Fecha de Inicio : 26/01/2024
+Fecha de término: 30/01/2024
+Región y Comuna: N/A
+Dirección: N/A
+Horarios:  13 a 17 HRS DE LUNES A SAB / OMITIR FERIADOS
+Planillas con los participantes de curso (Dependiendo del caso de prueba configurar un archivo)	 
+Cuenta de Financiamiento: Excedente de capacitación
+
+
+Modifica el siguiente codigo para que busque una fecha que yo le pase con el siguiente formato:15/12/2023 
+
+
+
+18706156	3
+8815776		1
+14940324	8
+8766066		4
+12698613	0
+18090486	7
+6338985		4
+8113295		k
+6497779		2
+

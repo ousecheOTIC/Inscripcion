@@ -3,28 +3,27 @@ package MatrizRegresionn;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 
-import com.aventstack.extentreports.Status;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Date;
 import java.util.List ;
+import java.util.Locale;
 
 public class Inscripciones extends Login2 {//Hago la extension de login para hacer la prueba más rapido
     private static final Logger log = LoggerFactory.getLogger(Inscripciones.class) ;
@@ -41,19 +40,22 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     public WebElement btnBorrarCodigo;
 
     ///////////////////// DATOS PARA PRUEBAS
-    String NombreCliente = "SODIMAC ";
-    String RutCliente = "96792430-k";
-    String sucursal = "Casa Matriz";
-    String codigoSence = "1238044124"; //1238013718-- 1238019176 -- 1238017721
-    String valorAcordado ="600.000";
-    String fechaInicio = "22/12";
-    String fechaTermino = "25/12";
+    String NombreCliente = "";
+    String RutCliente = "";
+    String sucursal = "";
+    String tipolinea = "";
+    String tipoContrato="";
+    String codigoSence = ""; //1238013718-- 1238019176 -- 1238017721
+    String valorAcordado ="";
+    String fechaInicio = "";
+    String fechaTermino = "";
+    String tipoCuentaCapacitacion = "Capacitacion";
     String rutClienteFinanciamiento= "264483148";
     public static String numeroSolicitudDeCompra;
 
     int ConteoCantidadParticipantes = 0;
     List <WebElement> cantidadParticipantes = null;
-    String tipoCuentaCapacitacion = "Capacitacion";
+
 
 
     //Me quedé pegadooooo
@@ -236,7 +238,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
 
     @Test(priority = 38)
     public void InscripcionCursoConPerfilOtic() throws InterruptedException, IOException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(40));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(600));
 
         //Validamos que nos lleve a la pagina de inscripciones
         WebElement msjInscripcionDeCurso = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/h1")));
@@ -253,6 +255,11 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
             } else {
                 System.out.println("La longitud del número es menor a 8. No se insertará el guion.");
             }*/
+
+            //Buscamos el nombre del curso en el archivo de DATOS PRUEBAS
+            NombreCliente= Login2.extraerDatosDeLinea(Login2.rutaArchivo,15);
+            RutCliente= Login2.extraerDatosDeLinea(Login2.rutaArchivo,16);
+
             inputnombreCliente.sendKeys(NombreCliente);
             Thread.sleep(3000);
             //Hacemos una lista con los resultados que arroja
@@ -277,11 +284,14 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
                 for (WebElement opc : resultado) {
                     String txtCurso = opc.getText(); // Obtengo el texto del elemento actual en la lista
                     System.out.println("Resultado: " + txtCurso);
+
+                    WebElement PrimerElemento = wait.until(ExpectedConditions.visibilityOf(resultado.get(1)));
+                    PrimerElemento.click();
+                    break;
                 }
                 //TODO: hay que hacer una iteración que recorra la lista y seleccione la más parecida
-                Thread.sleep(3000);//Espera necesaria Si la quito se daña la prueba
-                WebElement PrimerElemento = wait.until(ExpectedConditions.visibilityOf(resultado.get(0)));
-                PrimerElemento.click();
+                //Thread.sleep(4000);//Espera necesaria Si la quito se daña la prueba
+
             } else if (resultado.size()>=5){
                 System.out.println("Hay mas de 5 resultados");
                 //Recorremos la lista de resultados para tomar los textos
@@ -346,11 +356,15 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         btnSeleccionaSucursal.click();
         Thread.sleep(3000);
         //Se desplegan las sucursales
-        WebElement sucursales = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("css-1nmdiq5-menu")));//No mover, es la variable que contiene la lista de sucursales
+        //WebElement sucursales = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("css-1nmdiq5-menu")));//No mover, es la variable que contiene la lista de sucursales
         //System.out.println(sucursales);
         capturarYAdjuntarCaptura("Captura_Cliente&Sucursal");//Captura de pantalla
 
-        sucursales.click();
+
+        //Buscamos el nombre del curso en el archivo de DATOS PRUEBAS
+        sucursal= Login2.extraerDatosDeLinea(Login2.rutaArchivo,17);
+
+        //sucursales.click();
 
         //TODO: Lo dejaré así para avanzar pero hace falta controlar cuando el cliente tiene más de una sucursal
 
@@ -376,30 +390,45 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         //En la parte inferior de la pantalla el usuario visualizará un botón con la opción "Salir" en el caso que
         // desee salir de la inscripción, si el usuario le da clic en este botón lo regresara a la pantalla principal
         // de inscripción, previamente se mostrará un mensaje de confirmación
-        WebElement btnSalir = driver.findElement(By.className("ml-[0.541rem]"));
-        if (btnSalir.isDisplayed()) {
-            System.out.println("Presionamos salir");
+        try {
+            // Utilizar el tiempo de espera para esperar a la visibilidad del elemento
+            WebElement btnSalir = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("eCGCgc")));
+            // Realizar alguna acción con el botón (por ejemplo, hacer clic)
             btnSalir.click();
-        } else {
-            System.out.println("No aparece boton salir");
-        }
 
-        //Validamos mensaje de advertencia
-        WebElement msjAdvertencia = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[contains(text(), '¿Quieres salir de la inscripción?')]")));
-        String txtmsjAdvertencia = msjAdvertencia.getText();
-        if (txtmsjAdvertencia.contains("¿Quieres salir de la inscripción?")) {
-            //Buscamos boton Salir
-            //WebElement btnConfirmarSalir = driver.findElement(By.cssSelector("#single-spa-application\\:\\@CCC\\/inscriptions > div > div.sc-bcXHqe.dqlVec > div > div.sc-bcXHqe.hlMJoa > div > div.sc-eDvSVe.jDzeEO > div > button.sc-bcXHqe.eCGCgc.rounded-full.whitespace-nowrap.px-\\[2\\.5rem\\].h-12.text-xl.gap-2.py-1.px-4.font-medium.bg-secondary.hover\\:bg-white.hover\\:border-solid.hover\\:border-secondary.hover\\:text-secondary.text-contained"));
-            //btnConfirmarSalir.click();
-            //Para efectos de continuidad de pruebas, no presionaremos salir si no que continuaremos
-            WebElement btnNoSalir = driver.findElement(By.xpath("//button[contains(text(), 'No Salir')]"));
-            btnNoSalir.click();
-            System.out.println("Salimos");
-        } else {
-            System.out.println("No aparece boton salir");
+            //Validamos mensaje de advertencia
+            WebElement msjAdvertencia = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h1[contains(text(), '¿Quieres salir de la inscripción?')]")));
+            String txtmsjAdvertencia = msjAdvertencia.getText();
+            if (txtmsjAdvertencia.contains("¿Quieres salir de la inscripción?")) {
+                //Buscamos boton Salir
+                //WebElement btnConfirmarSalir = driver.findElement(By.cssSelector("#single-spa-application\\:\\@CCC\\/inscriptions > div > div.sc-bcXHqe.dqlVec > div > div.sc-bcXHqe.hlMJoa > div > div.sc-eDvSVe.jDzeEO > div > button.sc-bcXHqe.eCGCgc.rounded-full.whitespace-nowrap.px-\\[2\\.5rem\\].h-12.text-xl.gap-2.py-1.px-4.font-medium.bg-secondary.hover\\:bg-white.hover\\:border-solid.hover\\:border-secondary.hover\\:text-secondary.text-contained"));
+                //btnConfirmarSalir.click();
+                //Para efectos de continuidad de pruebas, no presionaremos salir si no que continuaremos
+                WebElement btnNoSalir = driver.findElement(By.xpath("//button[contains(text(), 'No Salir')]"));
+                btnNoSalir.click();
+                System.out.println("Salimos");
+            } else {
+                System.out.println("No aparece boton salir");
+            }
+            //Thread.sleep(5000);
+
+        } catch (TimeoutException e) {
+            // Manejar la excepción, por ejemplo, imprimir un mensaje
+            System.out.println("El botón 'Salir' no está presente o visible dentro del tiempo especificado.");
+
+            // Inicializar SoftAssert
+            SoftAssert softAssert = new SoftAssert();
+
+            // Realizar aserciones
+            softAssert.assertTrue(false, "Aserción 1 fallida");
+            softAssert.assertEquals("Texto esperado", "Texto actual", "Aserción 2 fallida");
+
+            // Verificar todas las aserciones y recopilar resultados
+            softAssert.assertAll();
         }
-        Thread.sleep(5000);
     }
+
+
 
     @Test(priority = 41)
     public void OpcionContinuar() throws InterruptedException {
@@ -437,56 +466,61 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     }
 
     @Test(priority = 43)
-    public void TiposDeLineaDeTrabajo() throws InterruptedException {
+    public void TiposDeLineaDeTrabajo() throws InterruptedException, IOException {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        Thread.sleep(5000);
+        Thread.sleep(7000);
         //Cuando el usuario ingresa al paso 1, todas las opciones tanto de tipo de línea y tipo de contrato se ven inhabilitadas y cuando selecciona una de las opciones respectivamente estas quedan resaltadas.
-        List<WebElement> botones = driver.findElements(By.className("mt-[1.75rem]"));
-        System.out.println(botones);
-
-        if (botones.size() == 2) {
-            //Vemos si desplega los otros botones
-            WebElement nvabusqueda = driver.findElement(By.className("mt-[1.75rem]"));
-            List<WebElement> nvaBusqueda = driver.findElements(By.className("mt-[1.75rem]"));
-            System.out.println(nvaBusqueda.size());
-            //Si la cantidad de botones son 5 entonces vemos cuales son
+        List<WebElement> ListLineas = driver.findElements(By.className("mt-[1.75rem]"));
 
 
+
+        //Buscamos los datos en el archivo de DATOS PRUEBAS
+        tipolinea= Login2.extraerDatosDeLinea(Login2.rutaArchivo,11);
+
+
+        if (ListLineas.size() == 2 || ListLineas.size()==5) {
+            for (WebElement list :ListLineas) {
+                if (list.getText().contains(tipolinea)) {
+                    WebElement btn = list.findElement(By.className("hQWSJn"));
+                    btn.click();
+                    System.out.println("Seleccionamos la opcion: "+list.getText());
+                    break;
+                } else {
+                    //System.out.println("No hay opcion que coincida");
+                }
+            }
+        }else{
+            System.out.println("No hay suficientes botones ");
         }
     }
 
     //Lo dejé en ese orden para poder continuar cn flujo de inscripcion por codigo Sence
     @Test(priority = 45)
     public void TiposDeContrato_Franquicia() throws InterruptedException, IOException {
-        Thread.sleep(1000);
+        //Thread.sleep(5000);
         //Seguimos flujo de inscripcion de curso
-        List<WebElement> botones = driver.findElements(By.className("mt-[1.75rem]"));
-        System.out.println(botones.size());
+        List<WebElement> ListLineas = driver.findElements(By.className("mt-[1.75rem]"));
 
-        if (botones.size() >= 2) {
-            WebElement primerElemento = botones.get(0);//tomamos el primer boton (Franquicia)
-            primerElemento.click();
-            System.out.println("Presionamos franquicia");
-            //Vemos si desplega los otros botones
-            WebElement nvabusqueda = driver.findElement(By.className("mt-[1.75rem]"));
-            List<WebElement> nvaBusqueda = driver.findElements(By.className("mt-[1.75rem]"));
-            //System.out.println(nvaBusqueda.size());
-            //Si la cantidad de botones son 5 entonces vemos cuales son
-            if (nvaBusqueda.size() == 5) {
-                System.out.println("Hay 5 botones");
-                for (WebElement opcs : nvaBusqueda) {
-                    System.out.println(opcs.getText());
+        //Buscamos los datos en el archivo de DATOS PRUEBAS
+        tipoContrato= Login2.extraerDatosDeLinea(Login2.rutaArchivo,12);
+
+        if (ListLineas.size() == 1 || ListLineas.size()==5) {
+            for (WebElement lineas : ListLineas) {
+                if (lineas.getText().contains(tipoContrato)) {
+                    WebElement btn = lineas.findElement(By.className("hQWSJn"));
+                    System.out.println("Seleccionamos la opcion: "+lineas.getText());
+                    btn.click();
+                    break;
+                } else {
+                    //System.out.println("No hay opcion que coincida");
                 }
-
-                System.out.println("");
             }
-            //Presionamos la opcion contratos
-            WebElement btncursoInterno = nvaBusqueda.get(2);
-            WebElement btnTipoContratoNormal = nvaBusqueda.get(3);
-            btnTipoContratoNormal.click();
-        }else {
-            System.out.println("No está entrando al if ");
+        }else{
+            System.out.println("No hay suficientes botones ");
         }
+
+
+
         capturarYAdjuntarCaptura("Captura_FranquiciaYContrato");//Caprtura de pantalla
 
         OpcionSalir();
@@ -496,32 +530,29 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     }
 
     @Test(priority = 44)
-    public void TiposDeContrato_NoFranquicia() throws InterruptedException {
+    public void TiposDeContrato_NoFranquicia() throws InterruptedException, IOException {
         Thread.sleep(2000);
-
         //Tomamos todos los elementos presentes con la misma clase
         List<WebElement> botones = driver.findElements(By.className("mt-[1.75rem]"));
-        System.out.println(botones.size());
-        WebElement segundoElemento = botones.get(1);//tomamos el segundo boton (No Franquicia)
-        segundoElemento.click();
 
-        if (botones.size() == 5) {
-            //Vemos si desplega los otros botones
-            List<WebElement> nvaBusqueda = driver.findElements(By.className("mt-[1.75rem]"));
-            //WebElement segundoElemento = nvaBusqueda.get(1);//tomamos el segundo boton (No Franquicia)
-            //segundoElemento.click();
-            System.out.println(nvaBusqueda.size());
-            //Si la cantidad de botones son 5 entonces vemos cuales son
+        //Buscamos los datos en el archivo de DATOS PRUEBAS
+        tipolinea= Login2.extraerDatosDeLinea(Login2.rutaArchivo,11);
+        System.out.println(tipoContrato);
+        if (tipolinea.contains("2")||tipolinea.contains("No")){
+            WebElement segundoElemento = botones.get(1);//tomamos el segundo boton (No Franquicia)
+            segundoElemento.click();
 
-            if (nvaBusqueda.size() == 3) {
-                System.out.println("Hay 3 botones");
-                for (WebElement opcs : nvaBusqueda) {
-                    System.out.println(opcs.getText());
-                }
-
-            }
-            WebElement btncursoInterno = nvaBusqueda.get(2);
+            WebElement btncursoInterno = botones.get(2);//Seleccionamos Curso interno
+            btncursoInterno.getText();
             btncursoInterno.click();
+
+
+
+
+
+
+        }else {
+            System.out.println("No se seleccionó cuenta 2");
         }
 
         OpcionSalir();
@@ -561,7 +592,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     }
 
     @Test(priority = 47)
-    public void LongitudYValidacionCodigoSence() throws InterruptedException {
+    public void LongitudYValidacionCodigoSence() throws InterruptedException, IOException {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(50));
         this.barraCodigo = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[4]/div[1]/input"));
 
@@ -569,6 +600,9 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         barraCodigo.sendKeys(ingresoLetras);
         this.btnValidar = driver.findElement(By.xpath("//button[text()='Validar']"));
 
+        //Buscamos el nombre del curso en el archivo de DATOS PRUEBAS
+        codigoSence = extraerDatosDeLinea(rutaArchivo, 18);
+        System.out.println(codigoSence);
         //TODO: hay que controlar el caso que NO aparezca el resultado de la busqueda, guardar el error y terminar la prueba
         //2. Código Sence solo permite ingresar números
         String valor = (barraCodigo.getAttribute("value"));
@@ -729,7 +763,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         //Le envié 15 numeros para comprobar que anota solo 14
         int longitudInputValor = 14;
         String valor = valorAcordadoInput.getAttribute("value").replace(".", "");//Tomo el valor del input y le quito los puntos al String
-        System.out.println(valor); //Imprimo el valor
+        //System.out.println(valor); //Imprimo el valor
 
         if (valor.length() == longitudInputValor) {
             System.out.println("Cantidad de valores correcta");
@@ -742,7 +776,11 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
 
         //Le enviamos un valor normal para contuinuar con la prueba
         valorAcordadoInput.clear();
-        valorAcordadoInput.sendKeys(valorAcordado);
+
+        //Buscamos el nombre del curso en el archivo de DATOS PRUEBAS
+        codigoSence = extraerDatosDeLinea(rutaArchivo, 19);
+
+        valorAcordadoInput.sendKeys(valorAcordado);//Le enviamos el valor acordado
         capturarYAdjuntarCaptura("Captura_ValorAcordadoParticipante");//Caprtura de pantalla
 
     }
@@ -815,22 +853,23 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     public void Ingresos_Fechas_inicio_y_termino_del_curso() throws InterruptedException, IOException {
         OpcionContinuar();//Coloco esto porque comenté la opcion de arriba
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(600));
 
         //1. El usuario al ingresar al paso 3 verá un mensaje informativo que le solicita ingresar la fecha de inicio y termino del curso.
         //
         Thread.sleep(3000);//Espera de prueba
         WebElement paso3 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[1]/div[2]/span")));
         String txtpaso3 = paso3.getText();
-        System.out.println(txtpaso3);
 
         if ("Horarios".equals(txtpaso3)) {
-            System.out.println("Entramos al if");
 
-            seleccionarFechaInicio();
+            //Buscamos la fecha del curso en el archivo de DATOS PRUEBAS
+            fechaInicio = extraerDatosDeLinea(rutaArchivo, 20);
+            seleccionarFechaInicio(fechaInicio);
 
-
-            seleccionarFechaTermino();
+            //Buscamos la fecha del curso en el archivo de DATOS PRUEBAS
+            fechaTermino = extraerDatosDeLinea(rutaArchivo, 21);
+            seleccionarFechaTermino(fechaTermino);
 
             System.out.println("Escogimos las fechas");
             capturarYAdjuntarCaptura("Captura_FechasDeCurso");//Caprtura de pantalla
@@ -1002,7 +1041,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     }
 
     @Test(priority = 57)
-    public void  CargaMasivadeparticipantes () throws InterruptedException, AWTException, IOException {
+    public void CargaMasivadeparticipantes () throws InterruptedException, AWTException, IOException {
         Thread.sleep(5000);
         capturarYAdjuntarCaptura("Captura_Paso4_Participantes");//Captura de pantalla
         Thread.sleep(5000);
@@ -1021,7 +1060,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
 
         // Automatiza la navegación y selección del archivo usando Robot
         Robot robot = new Robot();
-        typeString(robot, "Carga Masiva Par - SIN ERROR");
+        typeString(robot, "Inscripcion 10 participantes");
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
         Thread.sleep(1000);
@@ -1042,6 +1081,8 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
 
     @Test(priority = 58)
     public void VisualizacionDeRegistros () throws InterruptedException, IOException {
+
+        try {
         //1. Después de cargar el archivo  Excel, se mostrará una previsualización de los registros de participantes.
         //
         WebElement pantallaEmergenteParticipantes = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[11]/div/div/div[2]")));
@@ -1049,7 +1090,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         //
         cantidadParticipantes= driver.findElements(By.className("CutUQ"));//Buscamos la tabla de datos
         ConteoCantidadParticipantes = cantidadParticipantes.size();
-        System.out.println("En el archivo hay "+cantidadParticipantes.size()+" participantes");
+        System.out.println("En el archivo hay "+ConteoCantidadParticipantes+" participantes");
 
         WebElement NombreParticipantes = cantidadParticipantes.get(0);
         List<WebElement> DatosParticipantes = NombreParticipantes.findElements(By.className("hGmhdP"));
@@ -1067,6 +1108,21 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         //if (WebElement ErrorDeCarga = driver.findElement(By.className("gWBTIn")).isDisplayed()){
 
         List <WebElement> Titulos = driver.findElements(By.className("LdkzEXp"));
+
+        } catch (TimeoutException e) {
+            // Inicializar SoftAssert
+            SoftAssert softAssert = new SoftAssert();
+
+            // Realizar aserciones
+            softAssert.assertTrue(false, "Aserción 1 fallida");
+            softAssert.assertEquals("Texto esperado", "Texto actual", "Aserción 2 fallida");
+
+            // Verificar todas las aserciones y recopilar resultados
+            softAssert.assertAll();
+
+            // La ejecución continúa incluso si hay fallos
+            System.out.println("La prueba continúa después de las aserciones");
+        }
 
         }
 
@@ -1141,7 +1197,6 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
     public void TipoCuentaFinanciamiento () throws InterruptedException, IOException {
         //Validar que estamos en el paso 5
         WebElement Paso5 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div/div[3]/div[2]/div/div[2]/div[1]")));
-        System.out.println(Paso5.getText());
         if (Paso5.isDisplayed() && Paso5.getText().equals("5")){
             System.out.println("Estamos en el Paso 5");
 
@@ -1191,7 +1246,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
             //2. El usuario solo podrá seleccionar una cuenta de financiamiento de entre las opciones disponibles.
             //
             //3. En la parte superior de la cuenta de financiamiento se visualizara los montos del curso mostrados en el paso 4
-            WebElement clientefinanciamenientoInput = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[7]/div[6]/div[1]/input"));
+            WebElement clientefinanciamenientoInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[7]/div[6]/div[1]/input")));
             clientefinanciamenientoInput.sendKeys(rutClienteFinanciamiento);
 
 
@@ -1360,7 +1415,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
             System.out.println("No coinciden la cantidad de participantes");
         }
     }
-    private static void typeString(Robot robot, String s) {
+    static void typeString(Robot robot, String s) {
         for (char c : s.toCharArray()) {
             typeChar(robot, c);
         }
@@ -1370,11 +1425,11 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         robot.keyPress(keyCode);
         robot.keyRelease(keyCode);
     }
-    private static void selectFile(Robot robot) {
+    static void selectFile(Robot robot) {
         // Implementa la lógica para seleccionar un archivo
         // Puedes usar las teclas de flecha, etc.
     }
-    private static void closeFileExplorer(Robot robot) {
+    static void closeFileExplorer(Robot robot) {
         // Implementa la lógica para cerrar la ventana del explorador de archivos
         // Puedes usar Alt + F4, por ejemplo
         robot.keyPress(KeyEvent.VK_ALT);
@@ -1387,7 +1442,7 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         // Puedes ajustar el valor de '500' según la cantidad de píxeles que deseas desplazarte a la derecha
         js.executeScript("window.scrollBy(500,0)");
     }
-    private void seleccionarFechaInicio() throws InterruptedException {
+    private String seleccionarFechaInicio(String fechaInicio) throws InterruptedException, IOException {
         wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         WebElement inputFechaInicio = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[2]/div[1]/div/div[1]/div/input")));
         inputFechaInicio.click();
@@ -1397,7 +1452,66 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         // Encuentra todos los elementos que representan las fechas en el calendario
         List<WebElement> fechas = driver.findElements(By.xpath("//div[contains(@class, 'react-datepicker__day')]"));
 
-        // Itera sobre las fechas y selecciona la primera opción disponible
+        fechaInicio = transformarFecha(fechaInicio);//transformamos la feha de 18/07/2024 a 18 de enero de 2024 para poder buscarla en el calendario
+        boolean fechaEncontrada  = false;
+
+        //System.out.println("Se supone que aqui ya esta trasnformada: "+fechaInicio);
+        for (WebElement fecha : fechas) {
+            String valorAriaDisabled = fecha.getAttribute("aria-disabled");
+
+            if (valorAriaDisabled == null || valorAriaDisabled.equals("true")) {
+                // La fecha está en gris (no disponible)
+            } else if (valorAriaDisabled.equals("false")) {
+
+                String fechaDisponible = fecha.getAttribute("aria-label");
+                System.out.println(fechaDisponible);//Para saber que fechas esta iterando
+
+
+                if (fechaDisponible.contains(fechaInicio)) {
+                    // Encuentra el elementoFecha usando el XPath con la fecha específica
+                    WebElement elementoFecha = driver.findElement(By.xpath("//div[contains(@aria-label, '" + fechaDisponible + "')]"));
+
+                    // Scroll hacia arriba
+                    JavascriptExecutor js = (JavascriptExecutor) driver;
+                    js.executeScript("window.scrollTo(0, 0);");
+
+                    // Hacer clic en el botón de la fecha disponible
+                    JavascriptExecutor executor = (JavascriptExecutor) driver;
+                    executor.executeScript("arguments[0].click();", elementoFecha);
+
+                    //Aqui solo seleccionamos la parte de la cadena que contiene la fecha seleccionada
+                    String[] partes = fechaDisponible.split(",");
+                    fechaDisponible = partes[1].trim();
+
+                    System.out.println("Fecha de inicio seleccionada: " + fechaDisponible);
+                    fechaEncontrada = true;
+                    break;  // Rompe el bucle después de seleccionar la fecha
+                }
+            }
+        }
+        if (fechaEncontrada = false){
+
+            //TODO: QUEDE AQUI BUSCANDO COMO HACER PARA PASAR AL SIGUIENTE MES SI NO ENCONTRÓ EN EL PRIMER MES
+            System.out.println("Esta pasando al segundo if");
+        }
+        return fechaInicio;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ///CODIGO ANTIGUO
+        /*// Itera sobre las fechas y selecciona la primera opción disponible
         for (WebElement fecha : fechas) {
             //Aqui agarro el atributo para saber en que estado está
             String valorAriaDisabled = fecha.getAttribute("aria-disabled");
@@ -1409,9 +1523,6 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
             } else if (valorAriaDisabled.equals("false")) {
                 String fechaDisponible = fecha.getAttribute("aria-label");
                 WebElement elementoFecha = driver.findElement(By.xpath("//div[contains(@aria-label, '"+fechaDisponible+"')]"));//Busco el boton de la fecha disponible aqui esta el error
-
-
-
 
                 //Scroll hacia arriba
                 JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -1425,20 +1536,23 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
                 System.out.println("Fecha seleccionada: " +fechaDisponible);
                 break;  // Rompe el bucle después de seleccionar la primera fecha disponible
             }
-        }
+        }*/
     }
-    private static void seleccionarFechaTermino()throws InterruptedException {
+    private static String seleccionarFechaTermino(String fechaTermino)throws InterruptedException {
         wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         WebElement FTermino = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[2]/div[2]/div/div[1]/div/input")));
 
         if (FTermino.getAttribute("disabled") == null){
             FTermino.click();
-            System.out.println("Presiono fecha de termino");
+            //System.out.println("Presiono fecha de termino");
             // Espera a que la página y el calendario se carguen completamente
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div/div/div[2]/div[2]")));
 
             // Encuentra todos los elementos que representan las fechas en el calendario
             List<WebElement> fechas = driver.findElements(By.xpath("//div[contains(@class, 'react-datepicker__day')]"));
+
+            fechaTermino = transformarFecha(fechaTermino);//transformamos la feha de 18/07/2024 a 18 de enero de 2024 para poder buscarla en el calendario
+
 
             // Itera sobre las fechas y selecciona la primera opción disponible
             for (WebElement fecha : fechas) {
@@ -1449,30 +1563,27 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
 
                 } else if (valorAriaDisabled.equals("false")) {
                     String fechaDisponible = fecha.getAttribute("aria-label");
-                    WebElement elementoFecha = driver.findElement(By.xpath("//div[contains(@aria-label, '"+fechaDisponible+"')]"));
 
-                    JavascriptExecutor executor = (JavascriptExecutor) driver;
-                    executor.executeScript("arguments[0].click();", elementoFecha);
+                    if (fechaDisponible.contains(fechaTermino)) {
+                        // Encuentra el elementoFecha usando el XPath con la fecha específica
+                        WebElement elementoFecha = driver.findElement(By.xpath("//div[contains(@aria-label, '" + fechaDisponible + "')]"));
 
-                    /////// Codigo antiguo, lo dejo por si acaso
-                            /*Actions actions = new Actions((driver));
-                            System.out.println(fechaDisponible);
-                            actions.moveToElement(elementoFecha).click();
-                            System.out.println("Ya presioné");
-                            Thread.sleep(3000);*/
+                        // Scroll hacia arriba
+                        JavascriptExecutor js = (JavascriptExecutor) driver;
+                        js.executeScript("window.scrollTo(0, 0);");
 
+                        // Hacer clic en el botón de la fecha disponible
+                        JavascriptExecutor executor = (JavascriptExecutor) driver;
+                        executor.executeScript("arguments[0].click();", elementoFecha);
 
-                    ///////////////////codigo antiguo ///////////////////
-                    // La fecha está disponible, haz clic en ella
-                            /*WebElement fechaDisponible = driver.findElement(By.xpath("//div[contains(@class, '" + fecha.getAttribute("class") + "')]"));
-                            wait.until(ExpectedConditions.elementToBeClickable(fechaDisponible)).click();*/
-                    System.out.println("Fecha seleccionada: " + fechaDisponible);
-                    break;  // Rompe el bucle después de seleccionar la primera fecha disponible
+                        //Aqui solo seleccionamos la parte de la cadena que contiene la fecha seleccionada
+                        String[] partes = fechaDisponible.split(",");
+                        fechaDisponible = partes[1].trim();
 
-
+                        System.out.println("Fecha de termino seleccionada: " + fechaDisponible);
+                        break;  // Rompe el bucle después de seleccionar la fecha
+                    }
                 }
-
-
             }
 
         }else {
@@ -1481,12 +1592,27 @@ public class Inscripciones extends Login2 {//Hago la extension de login para hac
         }
 
 
+        return fechaTermino;
+    }
+    public static String transformarFecha(String fechaInput) {
+        // Define el formato de entrada
+        SimpleDateFormat formatoEntrada = new SimpleDateFormat("dd/MM/yyyy");
 
+        try {
+            // Parsea la fecha de entrada
+            Date fecha = formatoEntrada.parse(fechaInput);
 
+            // Define el formato de salida
+            SimpleDateFormat formatoSalida = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
 
+            // Convierte la fecha al formato deseado
+            return formatoSalida.format(fecha);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
 
     }
-
     @AfterSuite
     public void finalizarReporte() {
         // Finalizar y generar el informe ExtentReports

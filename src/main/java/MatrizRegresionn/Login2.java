@@ -12,30 +12,34 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Login2 {
-    private String url = "https://sucursalvirtualv2-qa2.ccc.cl/login";
     static WebDriver driver;
     private static WebDriverWait wait;
     ExtentReports extent;
     private ExtentTest test;
     private String folderName;
-    String Usuario = "265589014";//265589014 --116088134
-    String Contraseña = "Otiiic2023";//Oticcc2023 --1160 --Otiiic2023
-    String ContraseñaIncorrecta ="1235";
+    String Usuario = "";//265589014 --116088134
+    String Contraseña = "";//Oticcc2023 --1160 --Otiiic2023 --Oticc--2024
+    String ContraseñaIncorrecta = "1235";
+    int numeroLinea = 0;
 
+    public static String rutaArchivo = "C:\\Users\\ouseche\\OneDrive - OTIC CChC\\Escritorio\\Automatización\\probando\\DATOS PARA PRUEBAS.txt";// Ruta del archivo que contiene las credenciales
     @BeforeTest
     public void paginaSucursalVirtual() {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\ouseche\\OneDrive - OTIC CChC\\Escritorio\\Automatización\\probando\\src\\main\\resources\\drivers\\chromedriver-win64\\chromedriver.exe");
         driver = new ChromeDriver();
+        String url = "https://sucursalvirtualv2-qa.ccc.cl/login";
         driver.get(url);
         driver.manage().deleteAllCookies();
         //driver.manage().window().maximize();
@@ -46,7 +50,6 @@ public class Login2 {
         // Configuración del test actual en ExtentReports
         test = extent.createTest(getClass().getSimpleName());
     }
-
 
 
     @BeforeSuite
@@ -67,8 +70,8 @@ public class Login2 {
         //ReportManager.initializeReport("C:\\Users\\ouseche\\OneDrive - OTIC CChC\\Escritorio\\Automatización\\probando\\informe.html");
     }
 
-    @Test (priority = 1)
-    public void loginIncorrecto ()throws InterruptedException{
+    @Test(priority = 1)
+    public void loginIncorrecto() {
     /*    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
         WebElement msjHola =  wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/login\"]/div/div/div[3]/div/div/main/p[1]")));
@@ -102,13 +105,13 @@ public class Login2 {
     }
 
     @Test(priority = 2)
-    public void login () throws InterruptedException, IOException {
+    public void login() throws InterruptedException, IOException {
 
-
+        try {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
         //Valido que Aparezca mensaje "¡Bienvenido a nuestra Sucursal Virtual!"
-        WebElement msjHola =  wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/login\"]/div/div/div[3]/div/div/main/p[1]")));
+        WebElement msjHola = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/login\"]/div/div/div[3]/div/div/main/p[1]")));
         String TxtmsjHola = msjHola.getText();
         System.out.println(TxtmsjHola.equals("¡Bienvenido a nuestra Sucursal Virtual!"));
 
@@ -117,11 +120,21 @@ public class Login2 {
         WebElement passwordInput = driver.findElement(By.className("gBiohV"));
         WebElement loginBtn = driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/login\"]/div/div/div[3]/div/div/footer/button"));
 
-        //PASAMOS LOS USUARIOS
-        usernameInput.clear();
-        usernameInput.sendKeys(Usuario);
-        passwordInput.clear();
-        passwordInput.sendKeys(Contraseña);
+
+
+        Usuario = extraerDatosDeLinea(rutaArchivo, 2);
+        Contraseña = extraerDatosDeLinea(rutaArchivo, 3);
+
+
+            //PASAMOS LOS USUARIOS
+            usernameInput.clear();
+            usernameInput.sendKeys(Usuario);
+            passwordInput.clear();
+            passwordInput.sendKeys(Contraseña);
+
+
+
+
 
         capturarYAdjuntarCaptura("Captura_Login");//Captura de pantalla
 
@@ -129,20 +142,25 @@ public class Login2 {
         loginBtn.click();
 
 
-
         //1. Se debe indicar el mensaje de bienvenida al usuario que realiza login.
-        WebElement msj = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/home\"]/div/div[1]/div/div/div[3]/div/p[1]")));
-        String msjBienvenida = msj.getText();
+        WebElement msj = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/home\"]/div/div[1]/div/div/div[3]/div/p[1]"))); //QA2
+        //WebElement msj = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/home\"]/div/div[1]/div/div/div[2]/div/p[1]"))); //QA1
+
+            String msjBienvenida = msj.getText();
         if (msj.isDisplayed()) {
             System.out.printf(msjBienvenida);
 
-        }else {
-            System.out.printf("No aparece mensaje");;
+        } else {
+            System.out.printf("No aparece mensaje");
+            ;
+        }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     @Test(priority = 3)
-    public void mensajeBienvenida () throws InterruptedException, IOException {
+    public void mensajeBienvenida() throws InterruptedException, IOException {
         wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         WebElement usuario = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/home\"]/div/div[1]/div/div/div[1]/div/div[1]/div/div/p")));
         String txtusuario = usuario.getText();//tomamos el nombre del usuario ingresado
@@ -155,7 +173,7 @@ public class Login2 {
     }
 
     @Test(priority = 4)
-    public void OpcionIntegraNegocio () throws InterruptedException, IOException {
+    public void OpcionIntegraNegocio() throws InterruptedException, IOException {
         accesoInegraNogocio();
         Thread.sleep(2000);//Espera necesaria para que carguen los dashboard
         capturarYAdjuntarCaptura("Captura_IntegraNegocio");//Captura de pantalla
@@ -164,10 +182,20 @@ public class Login2 {
     }
 
 
+    private void accesoInegraNogocio() throws InterruptedException {
+        List <WebElement> menuGestiona = driver.findElements(By.className("haOWZD"));
+        for (WebElement opcs : menuGestiona){
 
-    private void accesoInegraNogocio ()throws InterruptedException{
-        WebElement btnGestiona = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"single-spa-application:@CCC/home\"]/div/div[1]/div/div/div[3]/div/div[2]/div[2]/div[1]/div")));
-        btnGestiona.click();//Boton tarjeta Gestiona
+            if (opcs.getText().contains("Gestiona")){
+                WebElement btnGestiona = opcs.findElement(By.className("evHcFz"));
+                btnGestiona.click();//Boton tarjeta Gestiona
+
+            }
+
+        }
+
+
+
 
         //Hacemos una lista con opciones 1
         List<WebElement> opciones1 = driver.findElements(By.className("impacto-de"));
@@ -181,13 +209,13 @@ public class Login2 {
                 //Buscamos la    subClase
                 //List<WebElement> opciones2 = opciones1.stream().filter(elemento -> elemento.getAttribute("class").contains("text-darkened")).collect(Collectors.toList());
                 List<WebElement> opciones2 = driver.findElements(By.className("frame-wrapper"));
-                for (WebElement subClase :opciones2){
-                    System.out.println("--"+subClase.getText());
-                    if (subClase.getText().trim().contains("Administración De Cursos")){
+                for (WebElement subClase : opciones2) {
+                    System.out.println("--" + subClase.getText());
+                    if (subClase.getText().trim().contains("Administración De Cursos")) {
                         subClase.click();
                         Thread.sleep(5000);//pausa para ver si carga integra
                         break;
-                    }else {
+                    } else {
                         System.out.println("No está entrando al segundo if");
                         break;
                     }
@@ -201,7 +229,7 @@ public class Login2 {
         //Validamos que nos llve a Integra Negocio
 
 
-}
+    }
 
     void capturarYAdjuntarCaptura(String nombreCaptura) throws IOException {
         // Generar un nombre de archivo único para la captura de pantalla
@@ -213,6 +241,36 @@ public class Login2 {
 
         // Devolver la ruta completa del archivo de captura
         test.addScreenCaptureFromPath(fileName);
+    }
+
+
+    public static String extraerDatosDeLinea(String rutaArchivo, int numeroLinea) throws IOException {
+        String lineaExtraida = null;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
+            // Iterar sobre las líneas hasta llegar a la línea deseada
+            for (int i = 1; i <= numeroLinea; i++) {
+                lineaExtraida = br.readLine();
+
+                // Si llegamos al final del archivo antes de la línea deseada
+                if (lineaExtraida == null) {
+                    System.out.println("Número de línea solicitado excede el total de líneas en el archivo.");
+                    return null;
+                }
+            }
+        }
+
+        // Dividir la línea por ":"
+        String[] partes = lineaExtraida.split(":");
+
+        // Verificar si hay al menos dos partes (antes y después de ":")
+        if (partes.length >= 2) {
+            // Devolver la segunda parte (datos después de ":") eliminando espacios en blanco adicionales
+            return partes[1].trim();
+        } else {
+            System.out.println("La línea no contiene el formato esperado (no hay ':').");
+            return null;
+        }
     }
 
     @AfterMethod

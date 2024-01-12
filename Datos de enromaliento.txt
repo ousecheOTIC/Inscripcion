@@ -1,0 +1,25 @@
+		DATOS DE PERFIL
+Usuario: 265589014
+Contraseña: Oticc--2024
+
+		DATOS DE FILTROS
+Filtro por nombre:
+Filtro por Id Sence:
+Filtro por SC: 
+
+		DATOS DE INSCRIPCIÓN
+Nombre y RUT del cliente: ING. Y CONST. SIGDO KOPPERS S.A. - 91915000-9
+Sucursal: MALAGA
+Código Sence: 1238042594
+Valor Acordado por Participantes: $40.000.-
+Fecha de Inicio y término del curso:  29/12/2023 – 02/01/2024 
+Región y Comuna: REGION ANTOFAGASTA - CALAMA 
+Dirección: PEDRO MONTT 123
+Horarios: 10:30 A 14:30 / MARTES Y VIERNES / OMITIR FERIADOS
+HORAS PARCIALS: 4
+HORAS COMPLEMENTARIAS: 4
+
+Como hago para que tome solamente los datos que están despues de los ":"?Nombre y RUT del cliente: ING. Y CONST. SIGDO KOPPERS S.A. - 91915000-9
+Sucursal: MALAGA
+
+Generame un metodo que tome una linea de un archivo de texto de la carpeta local y busque la informacion que se encuentra luego de ":" y la guarde en una variable

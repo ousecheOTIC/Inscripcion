@@ -10,16 +10,13 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.time.Duration;
 import java.util.Set;
 public class Login {
     private String url = "https://sucursalvirtual-qa.ccc.cl/login";
     private WebDriver driver;
     private WebDriverWait wait;
 
-    public Login(WebDriverWait wait) {
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-    }
+
 
 
     @BeforeTest

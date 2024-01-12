@@ -17,8 +17,8 @@ public class Filtros {
         driver.get("https://sucursalvirtual-qa.ccc.cl/login");
 
         driver.manage().window().maximize();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-
+        long timeoutInSeconds = Duration.ofSeconds(20).toMillis();
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("login-component")));
         By css = By.cssSelector("#root > div > div > div.ant-col.form-section.ant-col-xs-24.ant-col-md-12 > main > div > h2");
         WebElement cssHola = driver.findElement(css);

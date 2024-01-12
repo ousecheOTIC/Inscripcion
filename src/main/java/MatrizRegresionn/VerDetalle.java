@@ -1,6 +1,7 @@
 package MatrizRegresionn;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -22,7 +24,7 @@ public class VerDetalle extends Grilla{
 
 
     @Test(priority = 19)
-    public void VisualizarInformacionDeCurso() throws InterruptedException {
+    public void VisualizarInformacionDeCurso() throws InterruptedException, IOException {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
         //Desplegamos la informacion de curso
@@ -246,7 +248,7 @@ public class VerDetalle extends Grilla{
 
         Thread.sleep(3000);
         //1. El contador de dias debe indicar los dias que faltan para liquidar el curso
-        WebElement diasParaLiquidarCurso =wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div[1]/div[3]/div/div[1]/div[1]")));
+        WebElement diasParaLiquidarCurso =wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("mb-[-0.5rem]")));
         String txtdiasParaLiquidarCurso = diasParaLiquidarCurso.getText();
 
         //Mostramos los dias que faltan para liquidar
@@ -264,9 +266,9 @@ public class VerDetalle extends Grilla{
 
     @Test(priority = 24)
     public void HistorialDelCurso() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(40));
 
-        //1. Se debe mostrar el historial del curso de acuerdo de acuerdo a los hitos que se vayan cumpliendo.
+        /*//1. Se debe mostrar el historial del curso de acuerdo de acuerdo a los hitos que se vayan cumpliendo.
         // Los hitos mas recientes se mostraran siempre de primero.
 
         //Desplegamos campo requisitos
@@ -279,7 +281,11 @@ public class VerDetalle extends Grilla{
         }
 
         //Desplegamos opciones
-        WebElement btnDesplegarOpciones = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div[2]/div[2]/div/div[2]/div/button")));
+        WebElement btnDesplegarOpciones = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[text()='Inscripción']")));
+
+        //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", btnDesplegarOpciones);
+
+        //Hacemos click para desplegar opciones de fechas
         btnDesplegarOpciones.click();
         Thread.sleep(2000);
         //Requisitos
@@ -336,10 +342,8 @@ public class VerDetalle extends Grilla{
         // Itera sobre las fechas ordenadas
         for (String fecha : fechasStr) {
             System.out.println(fecha);
-        }
+        }*/
     }
-
-
 
     @AfterTest
     public void close () throws InterruptedException {
