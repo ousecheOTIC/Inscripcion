@@ -1,0 +1,55 @@
+		DATOS DE PERFIL DE USUARIO
+Usuario: 265589014
+Contraseña: Oticc--2024
+
+5)		DATOS DE FILTROS
+Filtro por nombre: Uso de Buenas Prácticas de Manufactura en Una Planta Farmacéutica
+Filtro por Id Sence: 898784714
+Filtro por SC:
+
+10)		TIPO DE CONTRATO Y FRANQUICIA
+Tipo linea: Cuenta 2
+Tipo contrato: Normal
+
+14)		DATOS DE INSCRIPCIÓN (CUENTA 1)
+Nombre cliente: sodimac
+RUT del cliente:  61704000-K
+Sucursal: Huérfanos 1270
+Código Sence: 1238026126
+Valor Acordado por Participantes: $900.000
+Fecha de Inicio : 13/03/2024
+Fecha de término: 30/04/2024
+Hora de inicio: 0830
+Hora de Término: 1300
+Hora adicional Inicio: 0000
+Hora adicional término: 0000
+Hora Parcial Complementario:0
+Región:REGION METROPOLITANA
+Comuna: SANTIAGO
+Dirección: Santa Beatriz 170
+Comentario: QA
+
+32)		DATOS INSCRIPCION (CUENTA 2)
+Rut de curso:
+Nombre de curso:prueba
+
+		CREAR CODIGO DE CURSO NUEVO (CUENTA 2)
+Rut o nombre de OTEC: 2
+
+
+
+Horarios:LUNES A SAB / OMITIR FERIADOS
+
+
+
+
+
+Curso presencial: 1238038897
+Curso E-learning: 1238019723
+Curso distancia: 1238026126
+
+Cliente con cuenta2: KOMATSU CHILE
+
+
+Comite bipartito
+v y t

@@ -1,0 +1,10 @@
+Descargar los programas
+-configurar las 4 variables de entorno
+-
+
+Instalar git para poder clonar repo
+- Clonar repo mediante cmd desde el bitbucket de cada uno
+-abrir intellij
+-crear una cuenta en jetbrains cada uno
+-descargamos la version mas reciente de chromedriver
+-configuramos la ruta del chromedriver

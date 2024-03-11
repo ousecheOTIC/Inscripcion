@@ -2,21 +2,16 @@ package MatrizRegresionn;
 
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
-import java.sql.SQLOutput;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 
 public  class Login {
     private String url = "https://sucursalvirtual-qa.ccc.cl/login";
@@ -40,7 +35,7 @@ public  class Login {
 
     @Test (priority = 1)
     public void loginIncorrecto ()throws InterruptedException{
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        WebDriverWait wait = new WebDriverWait(driver, 4000);
 
         //Valido que Aparezca mensaje "Hola!"
         By css = By.cssSelector("#root > div > div > div.ant-col.form-section.ant-col-xs-24.ant-col-md-12 > main > div > h2");
@@ -80,7 +75,7 @@ public  class Login {
     public void login() throws InterruptedException {
         driver.navigate().refresh();
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        WebDriverWait wait = new WebDriverWait(driver, 20);
         //Valido que Aparezca mensaje "Hola!"
         WebElement msjHola = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"root\"]/div/div/div[1]/main/div/h2")));
         String TxtmsjHola = msjHola.getText();
@@ -121,7 +116,7 @@ public  class Login {
     @Test(priority = 3)
     public void AccesoIntegraNegocio() throws InterruptedException {
         //TODO: hacer una lista de elementos con esta clase "xs-24" que es la que tiene todas las tarjetas y poder controlar que filtre por nombre de Integra negocio
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        WebDriverWait wait = new WebDriverWait(driver, 20);
         //DASHBOARD
         //Ingresar a la tarjeta Integra Negocios
         WebElement btnIntegraNegocio = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"root\"]/div/div/div/section/main/div/main/div/div[13]/div/div/div/button")));
@@ -162,7 +157,7 @@ public  class Login {
     @Test(priority = 4)
 
     public void mensajeBienvenida() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        WebDriverWait wait = new WebDriverWait(driver, 20);
         //WebElement ventanaNueva = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(By.xpath("//span[text()='Tipo de Curso']")")));
         WebElement ventanaNueva = wait.until(ExpectedConditions.visibilityOfElementLocated((By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[1]/div[2]/div/div[1]/div/div/span"))));
         String msjNuevaVentana = ventanaNueva.getText();

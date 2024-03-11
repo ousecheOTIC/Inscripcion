@@ -9,28 +9,23 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.io.IOException;
 
 public class VerDetalle extends Grilla{
     private static final Logger log = LoggerFactory.getLogger(Inscripciones.class);
+    private static WebDriverWait wait;
 
 
     @Test(priority = 19)
-    public void VisualizarInformacionDeCurso() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+    public void VisualizarInformacionDeCurso() throws InterruptedException, IOException {
+        wait =  new WebDriverWait(driver, 40);
 
         //Desplegamos la informacion de curso
         WebElement informacionDeCurso = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("headlessui-disclosure-button-3")));
         informacionDeCurso.click();
 
         //1. Se debe visualizar el nombre de la OTEc
-        WebElement nombreOtec = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#headlessui-disclosure-panel-4 > div:nth-child(1) > div:nth-child(1) > h2")));
+        WebElement nombreOtec = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"headlessui-disclosure-panel-4\"]/div[1]/div[1]/h2")));
         String txtNombreOtec = nombreOtec.getText();
 
         if (nombreOtec.isDisplayed()) {
@@ -40,7 +35,7 @@ public class VerDetalle extends Grilla{
         }
 
         //Rut Otec
-        WebElement rutOtec = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#headlessui-disclosure-panel-4 > div:nth-child(1) > div:nth-child(2) > h2")));
+        WebElement rutOtec = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"headlessui-disclosure-panel-4\"]/div[1]/div[2]/h2")));
         String txtRutOtec = rutOtec.getText();
 
         if (rutOtec.isDisplayed()) {
@@ -50,7 +45,7 @@ public class VerDetalle extends Grilla{
         }
 
         // Cliente
-        WebElement cliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#headlessui-disclosure-panel-4 > div:nth-child(2) > div:nth-child(1) > h2")));
+        WebElement cliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"headlessui-disclosure-panel-4\"]/div[2]/div[1]/h2")));
         String txtcliente = cliente.getText();
 
         if (cliente.isDisplayed()) {
@@ -59,7 +54,7 @@ public class VerDetalle extends Grilla{
             System.out.println("No se visualiza Cliente");
         }
         // Rut Cliente.
-        WebElement rutcliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#headlessui-disclosure-panel-4 > div:nth-child(2) > div:nth-child(2) > h2")));
+        WebElement rutcliente = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"headlessui-disclosure-panel-4\"]/div[2]/div[2]/h2")));
         String txtRutCliente = rutcliente.getText();
 
         if (rutcliente.isDisplayed()) {
@@ -68,8 +63,8 @@ public class VerDetalle extends Grilla{
             System.out.println("No se visualiza Rut de Cliente");
         }
         // Participantes
-        WebElement participantesiniciales = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#headlessui-disclosure-panel-4 > div:nth-child(3) > div:nth-child(1) > h2")));
-        WebElement participantesActivos = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#headlessui-disclosure-panel-4 > div:nth-child(3) > div:nth-child(2) > h2")));
+        WebElement participantesiniciales = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"headlessui-disclosure-panel-4\"]/div[3]/div[1]/h2")));
+        WebElement participantesActivos = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"headlessui-disclosure-panel-4\"]/div[3]/div[2]/h2")));
 
         String txtparticipantesiniciales = participantesiniciales.getText();
         String txtparticipantesActivos = participantesActivos.getText();
@@ -85,7 +80,7 @@ public class VerDetalle extends Grilla{
         }
 
         // Jefe comercial
-        WebElement jefeComercial = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#headlessui-disclosure-panel-4 > div.flex.gap-\\[4\\.5rem\\].flex-row.justify-start > div:nth-child(2) > h2")));
+        WebElement jefeComercial = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"headlessui-disclosure-panel-4\"]/div[4]/div[2]/h2")));
         String txtjefeComercial = jefeComercial.getText();
 
         if (jefeComercial.isDisplayed()) {
@@ -98,7 +93,6 @@ public class VerDetalle extends Grilla{
 
     @Test(priority = 20)
     public void VisualizarTipodeCurso() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
         //Desplegamos Tipo de curso
         WebElement btnTipoDeCurso = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#headlessui-disclosure-button-5")));
@@ -211,7 +205,6 @@ public class VerDetalle extends Grilla{
 
     @Test(priority = 22)
     public void VisualizarMontosDelCurso() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
         //Desplegamos Tipo de curso
         WebElement btnTipoDeCurso = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"headlessui-disclosure-button-7\"]")));
@@ -242,11 +235,10 @@ public class VerDetalle extends Grilla{
 
     @Test(priority = 23)
     public void ContadorDeDias() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
         Thread.sleep(3000);
         //1. El contador de dias debe indicar los dias que faltan para liquidar el curso
-        WebElement diasParaLiquidarCurso =wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div[1]/div[3]/div/div[1]/div[1]")));
+        WebElement diasParaLiquidarCurso =wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("mb-[-0.5rem]")));
         String txtdiasParaLiquidarCurso = diasParaLiquidarCurso.getText();
 
         //Mostramos los dias que faltan para liquidar
@@ -264,9 +256,8 @@ public class VerDetalle extends Grilla{
 
     @Test(priority = 24)
     public void HistorialDelCurso() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        //1. Se debe mostrar el historial del curso de acuerdo de acuerdo a los hitos que se vayan cumpliendo.
+        /*//1. Se debe mostrar el historial del curso de acuerdo de acuerdo a los hitos que se vayan cumpliendo.
         // Los hitos mas recientes se mostraran siempre de primero.
 
         //Desplegamos campo requisitos
@@ -278,6 +269,13 @@ public class VerDetalle extends Grilla{
             btnRequisitos.click();
         }
 
+        //Desplegamos opciones
+        WebElement btnDesplegarOpciones = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[text()='Inscripción']")));
+
+        //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", btnDesplegarOpciones);
+
+        //Hacemos click para desplegar opciones de fechas
+        btnDesplegarOpciones.click();
         Thread.sleep(2000);
         //Requisitos
         WebElement fechasHistorial01 = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/inscriptions\"]/div/div[1]/div[3]/div[2]/div[2]/div[2]/div/div[2]/div[2]/div/ol/li[1]/h3[2]")));
@@ -333,10 +331,8 @@ public class VerDetalle extends Grilla{
         // Itera sobre las fechas ordenadas
         for (String fecha : fechasStr) {
             System.out.println(fecha);
-        }
+        }*/
     }
-
-
 
     @AfterTest
     public void close () throws InterruptedException {

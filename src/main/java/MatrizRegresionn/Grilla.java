@@ -9,15 +9,15 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.time.Duration;
 
 public class Grilla extends Filtros{
     //Grilla por cantidad de elementos
     private int cantidadDeRegistros = 20;
+    private static WebDriverWait wait;
 
     @Test(priority = 16)
     public void GrillaFiltrarPaginado () throws InterruptedException, IOException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        wait =  new WebDriverWait(driver, 4000);
         driver.navigate().refresh();
         Thread.sleep(3000);
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -55,7 +55,6 @@ public class Grilla extends Filtros{
     public void GrillaCambiarPaginado ()throws InterruptedException{
         //Cambiamos de pagina para ver más registros
         //1. Debe mostrar todo el detalle del curso
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         WebElement btnSiguientePaginado = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/div[7]/div/div[2]/div[2]/nav/a[6]")));
         btnSiguientePaginado.click();
         Thread.sleep(3000);
@@ -81,7 +80,6 @@ public class Grilla extends Filtros{
 
     @Test(priority = 18)
     public void GrillaDetalleCurso() throws InterruptedException, IOException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
 
         //TODO:  La busqueda debe arrojar resultados diferentes cada consulta
         //Esperamos que cargue la pagina
@@ -95,7 +93,6 @@ public class Grilla extends Filtros{
         String urlactual = driver.getCurrentUrl();
         String linkinscripcion = ("sucursalvirtualv2-qa.ccc.cl/inscriptions");
         //System.out.println(urlactual);
-        capturarYAdjuntarCaptura("Captura_DetalleCurso");//Captura de pantalla
 
         if (urlactual.contains(linkinscripcion)) {
             System.out.println("Estamos en link de Inscripciones");

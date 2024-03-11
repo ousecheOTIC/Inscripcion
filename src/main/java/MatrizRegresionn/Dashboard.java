@@ -1,32 +1,27 @@
 package MatrizRegresionn;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.Formatter;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 
 public class Dashboard extends Login2 {
     private static WebDriverWait wait;
     private static final Logger log = LoggerFactory.getLogger(Inscripciones.class);
-    String nombreCurso = "calidad";
-    String IdSdence = "898784714";
+
+    String nombreCurso = "";
+    String IdSdence = "";
     String tipoDeBuscadorr = "id sence";
-    String elementoBusquedaa = "6306572";
+    String elementoBusquedaa = "6423520";
     public int IDinput =6306572;
     int cantidadRegistros = 10;
 
@@ -84,7 +79,7 @@ public class Dashboard extends Login2 {
     //InfoDeUsuario
     @Test(priority = 6)
     public void InfoDeUsuario() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        /*wait =  new WebDriverWait(driver, 4000);
 
         //1. En la barra superior derecha se debe mostrar el nombre del usuario y el segmento de negocio (OTIC, OTEC o CLIENTE)
         WebElement segmentoUsuario =wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[1]/div/div[1]/div/div/span")));
@@ -104,13 +99,13 @@ public class Dashboard extends Login2 {
 
 
         //3. Para un usuario final no se debe mostrar el ícono admisnitrador.
-        //falta definicion
+        //falta definicion*/
     }
 
     //Configuracion
     @Test (priority = 7)
     public void Configuracion ()throws InterruptedException {
-        /*WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        /*
 
         try {
 
@@ -164,7 +159,7 @@ public class Dashboard extends Login2 {
     //Buscador de cursos
     @Test(priority = 8)
     public void BuscadorDeCursos() throws InterruptedException {
-     /*   WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(25));
+     /*
 
         //2. Admite máximo 10 registros en el campo de búsqueda
         //Lo que entiendo es que del resultado arroja maximo 10, quedando los proximos 10 en la proxima pagina
@@ -232,8 +227,10 @@ public class Dashboard extends Login2 {
     //Buscador x nombre
     @Test(priority = 9)
     public void BuscadorDeCursosXnombre () throws InterruptedException, IOException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(25));
         //1. El buscador debe funcionar al hacer enter en el campo despúés de introducir un registro
+
+        //Buscamos el nombre del curso en el archivo de DATOS PRUEBAS
+        nombreCurso= Login2.extraerDatosDeLinea(Login2.rutaArchivo,6);
 
         //Llamamos el metodo buscar y filtramos por nombre
         buscadorDeCursos("Nombre de curso",nombreCurso);
@@ -242,8 +239,11 @@ public class Dashboard extends Login2 {
     //Buscador de cursos por ID
     @Test(priority = 10)
     public void BuscadorDeCursosPorID () throws InterruptedException, IOException {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         //String tipoDeBuscador =elementoBusqueda;
+
+        //Buscamos el nombre del curso en el archivo de DATOS PRUEBAS
+        IdSdence= Login2.extraerDatosDeLinea(Login2.rutaArchivo,7);
+
 
         buscadorDeCursos("ID Sence", IdSdence);
         Thread.sleep(5000);
@@ -254,7 +254,6 @@ public class Dashboard extends Login2 {
     @Test (priority = 11)
     public void botonGraficos () throws InterruptedException, IOException {
         //1. EL botón mostrar gráficos debe permitir visualizar los graficos
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         wait.until(ExpectedConditions.elementToBeClickable(By.className("justify-content-center")));
 
         WebElement btnGraficos =driver.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/div[2]/button"));
@@ -294,11 +293,10 @@ public class Dashboard extends Login2 {
         Thread.sleep(2000);
     }
 
-    private void buscadorDeCursos(String tipoDeBuscador, String elementoBusqueda) throws InterruptedException, IOException {
+    public static String buscadorDeCursos(String tipoDeBuscador, String elementoBusqueda) throws InterruptedException, IOException {
 
         //Thread.sleep(3000);//Esperamos mientras carga
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(25));
-
+        wait =  new WebDriverWait(driver, 4000);
 
         //Seleccionamos filtro
         WebElement btnDespliegue = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#headlessui-menu-button-1 > svg")));
@@ -322,7 +320,7 @@ public class Dashboard extends Login2 {
         // Localiza todos los elementos por su clase
         Thread.sleep(3000);//Espera OBLIGATORIA
         List<WebElement> buscador = driver.findElements(By.cssSelector(".block.px-4.py-2"));
-        //System.out.println(buscador.size());
+        System.out.println(buscador.size());
         if (buscador.size()==3) {
             for (WebElement opc : buscador) {
                 String palabraMinuscula = opc.getText().toLowerCase();
@@ -353,9 +351,10 @@ public class Dashboard extends Login2 {
                 //System.out.println("Entramos al if nombre");
                 //Valido que la busqueda fue precisa
                 //Intercepto el Nombre de cada resultado y lo anexo a una lista
+                elementoBusqueda = extraerDatosDeLinea(rutaArchivo,6);
                 Thread.sleep(5000);//Espera necesaria
                 WebElement tablaResultados = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/table/tbody")));
-                List<WebElement> resultadoFiltro = driver.findElements(By.className("fYMkUI"));
+                List<WebElement> resultadoFiltro = driver.findElements(By.className("kAihBX"));
                 //System.out.println(resultadoFiltro.size());
                 // Itera a través de la lista de elementos
                 int cantidadResultadosXNombre = 0;
@@ -375,7 +374,7 @@ public class Dashboard extends Login2 {
                             // Eliminar signos de puntuación alrededor de la palabra (opcional)
                             palabra = palabra.replaceAll("[.,!?]", "");
                             // Comprobar si la palabra actual coincide con la palabra buscada (ignorando mayúsculas/minúsculas)
-                            if (palabra.equalsIgnoreCase(nombreCurso)) {
+                            if (elementoBusqueda.contains(palabra)) {
                                 encontrado = true; // Encontramos la palabra
                                 break; // Sal del bucle si la palabra fue encontrada
                             }
@@ -410,9 +409,9 @@ public class Dashboard extends Login2 {
                 //System.out.println("-"+resultadoFiltro.size());
                 for (WebElement listado : resultadoFiltro) {
                     //System.out.println("- "+listado.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/table/tbody/tr[1]/td[2]")).getText());
-
+                    System.out.println();
                     if (elementoBusqueda.toLowerCase().equals((CharSequence) listado.findElement(By.xpath("//*[@id=\"single-spa-application:@CCC/dashboard\"]/div/div[1]/div[3]/div[2]/div/div/div/table/tbody/tr[1]/td[2]")).getText())) {
-                        //System.out.println("se encontró el Id en la busqueda");
+                        System.out.println("se encontró el Id en la busqueda");
                         cantidadResultados = cantidadResultados + 1;
 
                     } else {
@@ -429,8 +428,14 @@ public class Dashboard extends Login2 {
             }
 
         }
+        return tipoDeBuscador;
     }
 
+    @AfterSuite
+    public void finalizarReporte() {
+        // Finalizar y generar el informe ExtentReports
+        extent.flush();
+    }
 
     @AfterTest
     public void close () throws InterruptedException {
