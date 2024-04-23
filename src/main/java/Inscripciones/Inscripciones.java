@@ -445,7 +445,7 @@ public class Inscripciones {//Hago la extension de login para hacer la prueba m�
     }
 
     @And ("Presionamos continuar")
-    public void OpcionContinuar() throws InterruptedException {
+    public void OpcionContinuar()  throws InterruptedException {
 
         // Opción "Continuar" de la selección de un cliente
         WebElement btnContinuar = wait.until(ExpectedConditions.elementToBeClickable((By.className("mr-[0.2rem]"))));
