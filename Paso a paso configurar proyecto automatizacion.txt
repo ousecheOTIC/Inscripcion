@@ -1,10 +1,37 @@
 Descargar los programas
 -configurar las 4 variables de entorno
+-Variables de entorno:
+	-Se añade una nueva variable de usuario llamada: JAVA_HOME y la ruta donde se ubica
+	-Se añade una nueva variable de sistema llamada: JAVA_HOME y la ruta donde se ubica
+	-Se añade una nueva variable de sistema llamada: MAVEN_HOME y la ruta donde se ubica
+	-Se agrega en "Path" las siguientes rutas: %MAVEN_HOME%\bin y la ruta del JDK
+
 -
 
-Instalar git para poder clonar repo
-- Clonar repo mediante cmd desde el bitbucket de cada uno
--abrir intellij
--crear una cuenta en jetbrains cada uno
--descargamos la version mas reciente de chromedriver
--configuramos la ruta del chromedriver
+
+-Instalar git para poder clonar repositorio (No es necesario claves de admin)
+-Copiar link para clonar repositorio desde Bitbucket
+-Abrir CMD, ingresar a la carpeta donde se desea dejar el proyecto y pegar link de clonacion
+-Crear una cuenta en jetbrains con correo de OTIC.
+-Abrir intellij, buscar proyecto clonado.
+-Descargamos la version mas reciente del chromedriver desde el siguiente link: https://googlechromelabs.github.io/chrome-for-testing/
+-Configuramos la ruta en el @BeforeTest, de la clase Login, cambiando únicamente la ruta de la carpeta donde guardamos el chromedriver 
+(al final de la ruta añadimos lo siguiente: "chromedriver.exe")
+
+
+PARA CONFIGURAR EL BROWSER DE OTROS NAVEGADORES SE COLOCA:
+    @Parameters("browser")
+    public void setup(String browser) {
+        switch (browser.toLowerCase()) {
+            case "chrome":
+                System.setProperty("webdriver.chrome.driver", "path_to_chromedriver");
+                driver = new ChromeDriver();
+                break;
+            case "firefox":
+                System.setProperty("webdriver.gecko.driver", "path_to_geckodriver");
+                driver = new FirefoxDriver();
+                break;
+            default:
+                throw new IllegalArgumentException("Browser " + browser + " not supported");
+        }
+    }
